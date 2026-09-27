@@ -685,19 +685,19 @@
       "@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');",
       'body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6;overflow-x:hidden}',
       visualCss,
-      /* Preserve the JPEG's fixed layout, then scale the complete frame for narrow screens. */
-      '.sched-page{width:420px;max-width:420px;box-sizing:border-box;padding:10px}',
+      /* Match the JPEG's 3× (1263px) canvas, then fit the full frame on narrow screens. */
+      '.sched-page{width:421px;max-width:none;box-sizing:border-box;padding:10px;margin:0;transform:scale(3);transform-origin:top left}',
       '.sched-page .sched-row{grid-template-columns:72px minmax(0,1fr)}',
       '.sched-page .sched-info{padding:10px 12px}',
       '.sched-page .sched-meta{font-size:.69rem;gap:5px 10px}',
       '.sched-page .sched-course{font-size:.88rem}',
       '#scheduleViewport{display:flex;justify-content:center;width:100%;overflow:visible}',
-      '#scheduleScale{width:420px;flex:0 0 420px;transform-origin:top center}',
+      '#scheduleScale{width:1263px;flex:0 0 1263px;transform-origin:top center}',
       '</style>',
       '</head>',
       '<body>',
       '<div id="scheduleViewport"><div id="scheduleScale">'+buildScheduleFragment()+'</div></div>',
-      '<script>(function(){var viewport=document.getElementById("scheduleViewport");var scaleFrame=document.getElementById("scheduleScale");var schedule=scaleFrame.querySelector(".sched-page");function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/420);scaleFrame.style.transform="scale("+scale+")";viewport.style.height=(schedule.offsetHeight*scale)+"px";}window.addEventListener("resize",fitSchedule);window.addEventListener("orientationchange",fitSchedule);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();<\/script>',
+      '<script>(function(){var viewport=document.getElementById("scheduleViewport");var scaleFrame=document.getElementById("scheduleScale");var schedule=scaleFrame.querySelector(".sched-page");function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/1263);scaleFrame.style.transform="scale("+scale+")";viewport.style.height=(schedule.offsetHeight*3*scale)+"px";}window.addEventListener("resize",fitSchedule);window.addEventListener("orientationchange",fitSchedule);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();<\/script>',
       '</body>',
       '</html>'
     ].join("\n");
