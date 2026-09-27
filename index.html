@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>برنامه‌ساز کلاسی</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg1:#0f0c29; --bg2:#302b63; --bg3:#24243e;
+    --card:#1e1b4b; --card2:#171335; --border:#312e81;
+    --text:#e2e8f0; --muted:#94a3b8; --accent:#a5b4fc; --prof:#c4b5fd;
+    --badge:#4c1d95; --badge-text:#e9d5ff; --lab-bg:#334155; --lab-text:#cbd5e1;
+    --btn:#6d28d9; --btn-hover:#7c3aed;
+    --input-bg:#0f0c29; --input-border:#4338ca;
+  }
+  :root[data-theme="light"]{
+    --bg1:#f5f3ff; --bg2:#ede9fe; --bg3:#f8fafc;
+    --card:#ffffff; --card2:#f3f0fb; --border:#ddd6fe;
+    --text:#1e1b2e; --muted:#6b7280; --accent:#7c3aed; --prof:#6d28d9;
+    --btn:#7c3aed; --btn-hover:#6d28d9;
+    --input-bg:#ffffff; --input-border:#c4b5fd;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body{ background:linear-gradient(160deg, var(--bg1), var(--bg2), var(--bg3)); }
+  body{
+    font-family:'Vazirmatn', system-ui, sans-serif;
+    min-height:100vh; padding:16px; color:var(--text);
+  }
+  .shell{ max-width:640px; margin:0 auto; }
+
+  header.app-head{ text-align:center; padding:44px 4px 20px; }
+  header.app-head h1{
+    font-size:1.5rem; font-weight:700; display:flex; align-items:center;
+    justify-content:center; gap:10px;
+  }
+
+  .release-guide-link{margin-top:8px;font-size:.75rem}.release-guide-link a{color:var(--accent);text-decoration:none}.release-guide-link a:hover{text-decoration:underline}
+  .panel{
+    background:var(--card); border:1px solid var(--border); border-radius:18px;
+    padding:18px; margin-bottom:16px; box-shadow:0 10px 40px rgba(0,0,0,0.35);
+  }
+  .panel h2{ font-size:1rem; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .panel .step-num{
+    width:22px; height:22px; border-radius:50%; background:var(--btn); color:#fff;
+    display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0;
+  }
+
+  .dz-file{ margin-top:8px; font-size:0.8rem; color:var(--accent); text-align:center; }
+
+  .divider-or{
+    display:flex; align-items:center; gap:10px; color:var(--muted); font-size:0.78rem; margin:14px 0;
+  }
+  .divider-or::before, .divider-or::after{ content:''; flex:1; height:1px; background:var(--border); }
+
+  textarea, input[type="text"], input[type="password"]{
+    width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);
+    border-radius:10px; padding:10px 12px; font-family:inherit; font-size:0.85rem; resize:vertical;
+  }
+  textarea{ min-height:110px; }
+  textarea:focus, input:focus, select:focus{ outline:none; border-color:var(--accent); }
+
+  button{
+    font-family:inherit; cursor:pointer; border:none; border-radius:10px;
+    font-size:0.85rem; font-weight:600; padding:11px 16px; transition:transform .1s, background .15s;
+  }
+  button:active{ transform:scale(0.98); }
+  .btn-primary{ background:var(--btn); color:#fff; width:100%; }
+  .btn-primary:hover{ background:var(--btn-hover); }
+  .btn-primary:disabled{ opacity:0.5; cursor:not-allowed; }
+  .btn-secondary{ background:var(--card2); color:var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover{ border-color:var(--accent); }
+  .btn-danger{ background:transparent; color:#f87171; border:1px solid rgba(248,113,113,0.4); padding:6px 10px; font-size:0.75rem; }
+  .btn-danger:hover{ background:rgba(248,113,113,0.1); }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .btn-row button{ flex:1; min-width:120px; }
+
+  .status{ font-size:0.82rem; margin-top:10px; display:flex; align-items:center; gap:8px; }
+  .status.err{ color:#f87171; }
+  .status.ok{ color:#34d399; }
+  .spinner{
+    width:14px; height:14px; border:2px solid var(--border); border-top-color:var(--accent);
+    border-radius:50%; animation:spin 0.8s linear infinite; flex-shrink:0;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* editable rows */
+  .rowcard{
+    background:var(--card2); border:1px solid var(--border); border-radius:12px;
+    padding:12px; margin-bottom:10px;
+  }
+  .rowcard-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .rowcard-top .idx{ font-size:0.75rem; color:var(--muted); }
+  .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .field-grid .full{ grid-column:1 / -1; }
+  .field{ display:flex; flex-direction:column; gap:4px; }
+  .field label{ font-size:0.7rem; color:var(--muted); }
+  select{
+    width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);
+    border-radius:10px; padding:9px 10px; font-family:inherit; font-size:0.82rem;
+  }
+  .checkline{ display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--muted); grid-column:1/-1; }
+  .checkline input{ width:16px; height:16px; accent-color:var(--btn); }
+
+  #addRowBtn{ width:100%; border:1px dashed var(--border); background:transparent; color:var(--accent); }
+  #addRowBtn:hover{ border-color:var(--accent); background:rgba(165,180,252,0.08); }
+
+  /* generated schedule preview */
+  .sched-header{
+    background:linear-gradient(135deg, #4c1d95, #6d28d9); border-radius:20px 20px 0 0;
+    padding:18px 20px; text-align:center; box-shadow:0 4px 20px rgba(109,40,217,0.4);
+    color:#fff;
+  }
+  .sched-header span.title{ font-size:1.35rem; font-weight:700; color:#fff; }
+  /* The generated schedule preview always keeps its own fixed dark palette,
+     independent of the app's light/dark toggle -- it must look identical
+     to the downloaded standalone file no matter which app theme is active. */
+  .sched-card{ background:#1e1b4b; border-radius:0 0 20px 20px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.5); }
+  .sched-row{ display:grid; grid-template-columns:78px 1fr; border-bottom:1px solid #312e81; }
+  .sched-row:last-child{ border-bottom:none; }
+  .sched-day{
+    display:flex; align-items:center; justify-content:center; padding:14px 6px;
+    font-weight:600; font-size:0.85rem; color:#fff; text-align:center;
+  }
+  .sched-info{ padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .sched-course{ font-weight:600; font-size:0.95rem; color:#f1f5f9; line-height:1.35; }
+  .sched-meta{ display:flex; flex-wrap:wrap; gap:8px 12px; font-size:0.78rem; color:#94a3b8; }
+  .sched-meta span{ display:inline-flex; align-items:center; gap:4px; }
+  .sched-time{ color:#a5b4fc; font-weight:500; }
+  .sched-location{ color:#94a3b8; }
+  .sched-prof{ color:#c4b5fd; }
+  .sched-exam{ margin-top:2px; }
+  .exam-badge{
+    display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:600;
+    background:#4c1d95; color:#e9d5ff;
+  }
+  .exam-badge.lab{ background:#334155; color:#cbd5e1; }
+
+  #previewWrap{ max-width:420px; margin:0 auto; }
+  .style-field{display:flex;flex-direction:column;gap:5px;margin:0 0 14px}.style-field label{font-size:.75rem;color:var(--muted)}
+  .download-actions{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .download-actions button{width:100%}
+  .empty-note{ text-align:center; color:var(--muted); font-size:0.85rem; padding:20px 10px; }
+
+  #themeToggle{
+    position:fixed; top:14px; left:14px; z-index:50;
+    width:40px; height:40px; border-radius:50%; background:var(--card);
+    border:1px solid var(--border); color:var(--text); font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center; padding:0;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+
+  @media (max-width:380px){
+    .field-grid{ grid-template-columns:1fr; }
+  }
+</style>
+<style id="scheduleVisualStyles">
+.sched-page{--pbg:#0f0c29;--pbg2:#302b63;--surface:#1e1b4b;--line:#312e81;--ink:#f1f5f9;--muted:#94a3b8;--accent:#a5b4fc;--prof:#c4b5fd;--badge:#4c1d95;--badgeText:#e9d5ff;--lab:#334155;--labText:#cbd5e1;max-width:420px;min-height:180px;margin:0 auto;padding:10px;background:linear-gradient(160deg,var(--pbg),var(--pbg2));color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;border-radius:20px;overflow:hidden}
+.sched-header{background:linear-gradient(135deg,#4c1d95,#6d28d9);border-radius:14px 14px 0 0;padding:15px 16px;text-align:center;color:#fff;box-shadow:0 4px 18px #6d28d944}.sched-header .title{font-size:1.2rem;font-weight:700;color:#fff}.sched-card{background:var(--surface);border-radius:0 0 14px 14px;overflow:hidden;box-shadow:0 10px 30px #0004}.sched-row{display:grid;grid-template-columns:72px minmax(0,1fr);border-bottom:1px solid var(--line)}.sched-row:last-child{border-bottom:0}.sched-day{display:flex;align-items:center;justify-content:center;padding:12px 5px;font-weight:600;font-size:.8rem;color:#fff;text-align:center}.sched-info{min-width:0;padding:10px 12px;display:flex;flex-direction:column;gap:5px}.sched-course{font-weight:600;font-size:.88rem;color:var(--ink);line-height:1.45}.sched-meta{display:flex;flex-wrap:wrap;gap:5px 10px;font-size:.69rem;color:var(--muted)}.sched-meta span{display:inline-flex;align-items:center;gap:4px}.sched-time{color:var(--accent);font-weight:600}.sched-prof{color:var(--prof)}.sched-location{color:var(--muted)}.sched-exam{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:2px}.sched-exam .exam-label{font-size:.61rem;font-weight:500;opacity:.82}.sched-exam .exam-separator{font-weight:700;margin-inline:1px}.sched-page .sched-exam .exam-date,.sched-page .sched-exam .exam-time{display:inline-flex;align-items:baseline;gap:4px}.sched-exam .exam-value{font-size:.66rem;font-weight:700;direction:ltr;unicode-bidi:isolate}.sched-page .exam-badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.64rem;font-weight:600;background:var(--badge);color:var(--badgeText)}.sched-page .exam-badge.lab{background:var(--lab);color:var(--labText)}
+.sched-page[data-style="night-light"]{--pbg:#f0f2f7;--pbg2:#e8eaf3;--surface:#fff;--line:#e7e8f0;--ink:#25243a;--muted:#74768a;--accent:#6258a8;--prof:#65579a;--badge:#eeebf8;--badgeText:#54477e;--lab:#edf0f4;--labText:#5f6874}.sched-page[data-style="night-light"] .sched-header{background:linear-gradient(135deg,#494263,#776b9b);box-shadow:0 4px 16px #49426328}.sched-page[data-style="night-light"] .sched-card{box-shadow:0 10px 30px #30334b20}
+.sched-page[data-style="light-cards"]{--pbg:#f1eee8;--pbg2:#f1eee8;--surface:#fffdf8;--line:#e9e0d5;--ink:#302820;--muted:#897a6d;--accent:#a15d3f;--prof:#80543f;--badge:#f4e8dd;--badgeText:#925539;--lab:#ece8e2;--labText:#746f68;padding:9px;background:linear-gradient(160deg,#f7f2e9,#eee8df)}.sched-page[data-style="light-cards"] .sched-header{background:linear-gradient(135deg,#704738,#b57853);box-shadow:0 4px 16px #7047382c}.sched-page[data-style="light-cards"] .sched-card{background:transparent;box-shadow:none;padding-top:5px}.sched-page[data-style="light-cards"] .sched-row{display:flex;flex-direction:column;margin:7px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:0 3px 10px #543c2210}.sched-page[data-style="light-cards"] .sched-day{justify-content:flex-start;padding:5px 11px;text-align:right;font-size:.71rem}.sched-page[data-style="light-cards"] .sched-info{padding:9px 11px}
+.sched-page[data-style="purple-cards"]{--pbg:#12101b;--pbg2:#1a1528;--surface:#211c2d;--line:#393147;--ink:#f3effa;--muted:#b2a9bf;--accent:#c5a4f4;--prof:#d0b8ee;--badge:#392d4c;--badgeText:#eadcf9;--lab:#343143;--labText:#dfd9e8;padding:9px;background:linear-gradient(160deg,#12101b,#211831)}.sched-page[data-style="purple-cards"] .sched-header{background:linear-gradient(135deg,#382345,#79539a);box-shadow:0 4px 18px #79539a44}.sched-page[data-style="purple-cards"] .sched-card{background:transparent;box-shadow:none;padding-top:5px}.sched-page[data-style="purple-cards"] .sched-row{display:flex;flex-direction:column;margin:7px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:0 3px 14px #08061155}.sched-page[data-style="purple-cards"] .sched-day{justify-content:flex-start;padding:5px 11px;text-align:right;font-size:.71rem;border-bottom:1px solid #ffffff20}.sched-page[data-style="purple-cards"] .sched-info{padding:9px 11px}
+@media(max-width:380px){.sched-page{padding:8px}.sched-row{grid-template-columns:64px minmax(0,1fr)}.sched-info{padding:9px}.sched-meta{font-size:.64rem;gap:4px 8px}.sched-course{font-size:.84rem}}
+</style>
+</head>
+<body>
+
+  <button id="themeToggle" title="حالت روشن/تیره">🌙</button>
+
+  <div class="shell">
+    <header class="app-head">
+      <h1><span>📅</span>برنامه‌ساز کلاسی<span>📅</span></h1>
+      <p class="release-guide-link"><a href="code-guide.html">Code walkthrough · ساختار کد</a></p>
+    </header>
+
+    <!-- STEP 1: input -->
+    <div class="panel" id="inputPanel">
+      <h2><span class="step-num">۱</span>ورودی اطلاعات</h2>
+
+      <input type="file" id="fileInput" accept=".html,.htm,text/html" style="display:none;">
+      <div class="btn-row" style="margin-top:0;">
+        <button class="btn-secondary" id="fileBtn">انتخاب فایل HTML</button>
+      </div>
+      <div class="dz-file" id="fileNameDisplay"></div>
+
+      <div class="divider-or">یا</div>
+
+      <div class="field">
+        <textarea id="pasteText" placeholder="کد HTML جدول یا متن آن را اینجا پیست کن..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="parseBtn">استخراج خودکار</button>
+        <button class="btn-secondary" id="manualBtn">حالت دستی</button>
+      </div>
+      <div class="status" id="parseStatus"></div>
+    </div>
+
+    <!-- STEP 2: edit -->
+    <div class="panel" id="editPanel" hidden>
+      <h2><span class="step-num">۲</span>بررسی و ویرایش کلاس‌ها</h2>
+      <div id="rowsContainer"></div>
+      <button id="addRowBtn">+ افزودن کلاس</button>
+      <div class="btn-row">
+        <button class="btn-primary" id="buildBtn">تولید برنامه</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: preview + download -->
+    <div class="panel" id="previewPanel" hidden>
+      <h2><span class="step-num">۳</span>پیش‌نمایش خروجی</h2>
+      <div class="style-field"><label for="scheduleStyleSelect">سبک برنامه</label><select id="scheduleStyleSelect"><option value="night">۱ · شبانه</option><option value="night-light">۲ · شبانه روشن</option><option value="light-cards">۳ · کارت روشن</option><option value="purple-cards">۴ · کارت بنفش</option></select></div>
+      <div id="previewWrap"></div>
+      <div class="download-actions" aria-label="دریافت برنامه">
+        <button class="btn-primary" id="downloadImgBtn">ذخیره به‌صورت JPEG</button>
+        <button class="btn-secondary" id="downloadBtn">دانلود فایل HTML</button>
+      </div>
+      <div class="status" id="downloadStatus"></div>
+    </div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ---------- theme toggle ----------
+  var themeBtn = document.getElementById("themeToggle");
+  function applyTheme(mode){
+    if (mode === "light"){
+      document.documentElement.setAttribute("data-theme", "light");
+      themeBtn.textContent = "☀️";
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      themeBtn.textContent = "🌙";
+    }
+  }
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem("scheduleAppTheme"); } catch(e){}
+  applyTheme(savedTheme === "light" ? "light" : "dark");
+  themeBtn.addEventListener("click", function(){
+    var next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+    applyTheme(next);
+    try { localStorage.setItem("scheduleAppTheme", next); } catch(e){}
+  });
+
+  // ---------- constants ----------
+  var DAY_ORDER = ["شنبه","یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنجشنبه","جمعه"];
+  var DAY_COLORS = {
+    "شنبه":"#2463a6",
+    "یکشنبه":"#087f8c",
+    "دوشنبه":"#28714f",
+    "سه‌شنبه":"#935a12",
+    "چهارشنبه":"#a94834",
+    "پنجشنبه":"#a13c69",
+    "جمعه":"#475569"
+  };
+
+  var DAY_COMPACT = ["شنبه","یکشنبه","دوشنبه","سهشنبه","چهارشنبه","پنجشنبه","جمعه"];
+  function isDayLine(line){
+    var c = String(line||"").replace(/[\u200c\s]/g,"");
+    return DAY_COMPACT.indexOf(c) !== -1;
+  }
+
+  function normalizeDay(d){
+    if(!d) return "شنبه";
+    var s = String(d).replace(/[\u200c\s]/g,"");
+    if (s === "سهشنبه" || s.indexOf("سه")===0) return "سه‌شنبه";
+    if (s === "چهارشنبه") return "چهارشنبه";
+    if (s === "پنجشنبه") return "پنجشنبه";
+    if (s === "یکشنبه") return "یکشنبه";
+    if (s === "دوشنبه") return "دوشنبه";
+    if (s === "شنبه") return "شنبه";
+    if (s === "جمعه") return "جمعه";
+    return "شنبه";
+  }
+
+  function toPersianDigits(str){
+    if(str===null||str===undefined) return "";
+    var map = {"0":"۰","1":"۱","2":"۲","3":"۳","4":"۴","5":"۵","6":"۶","7":"۷","8":"۸","9":"۹"};
+    return String(str).replace(/[0-9]/g, function(d){ return map[d]; });
+  }
+  function toEnglishDigits(str){
+    if(str===null||str===undefined) return "";
+    var map = {"۰":"0","۱":"1","۲":"2","۳":"3","۴":"4","۵":"5","۶":"6","۷":"7","۸":"8","۹":"9"};
+    return String(str).replace(/[۰-۹]/g, function(d){ return map[d]; });
+  }
+  function timeToMinutes(t){
+    var s = toEnglishDigits(t||"").trim();
+    var m = s.match(/(\d{1,2}):(\d{2})/);
+    if(!m) return 9999;
+    return parseInt(m[1],10)*60 + parseInt(m[2],10);
+  }
+  function escapeHtml(s){
+    return String(s===undefined||s===null? "": s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  var state = { rows: [], scheduleTitle: "برنامه کلاسی" };
+  var selectedScheduleStyle = "night";
+
+  // ---------- HTML table extraction (header-driven: order & extra columns don't matter) ----------
+  var HEADER_MAP = {
+    course:    ["درس"],
+    professor: ["استاد", "اساتید"],
+    day:       ["روز"],
+    time:      ["ساعت"],
+    examDate:  ["تاریخ امتحان", "امتحان"],
+    location:  ["مکان"]
+  };
+  var TIME_REGEX_G = /[0-9۰-۹]{1,2}:[0-9۰-۹]{2}/g;
+
+  function getCellText(cell){
+    var html = cell.innerHTML.replace(/<br\s*\/?>/gi, "\n");
+    var tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    var text = tmp.textContent || tmp.innerText || "";
+    return text.split(/\n+/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; }).join("\n");
+  }
+
+  function findScheduleTable(doc){
+    var tables = Array.prototype.slice.call(doc.querySelectorAll("table"));
+    for (var i = 0; i < tables.length; i++){
+      var headerCells = tables[i].querySelectorAll("tr:first-child th, tr:first-child td");
+      var headerText = Array.prototype.map.call(headerCells, function(c){ return c.textContent.trim(); }).join(" ");
+      if (headerText.indexOf("درس") !== -1 && headerText.indexOf("روز") !== -1) return tables[i];
+    }
+    return tables[0] || null;
+  }
+
+  function buildColumnIndex(headerCells){
+    var idx = {}, used = {};
+    Object.keys(HEADER_MAP).forEach(function(key){
+      for (var i = 0; i < headerCells.length; i++){
+        if (used[i]) continue;
+        if (HEADER_MAP[key].indexOf(headerCells[i].trim()) !== -1){ idx[key] = i; used[i] = true; break; }
+      }
+    });
+    Object.keys(HEADER_MAP).forEach(function(key){
+      if (idx[key] !== undefined) return;
+      for (var i = 0; i < headerCells.length; i++){
+        if (used[i]) continue;
+        if (HEADER_MAP[key].some(function(p){ return headerCells[i].indexOf(p) !== -1; })){ idx[key] = i; used[i] = true; break; }
+      }
+    });
+    return idx;
+  }
+
+  function parseHtmlTableToRows(htmlString){
+    var doc = new DOMParser().parseFromString(htmlString, "text/html");
+    var table = findScheduleTable(doc);
+    if (!table) throw new Error("جدولی در فایل پیدا نشد");
+    var rows = Array.prototype.slice.call(table.querySelectorAll("tr"));
+    if (!rows.length) throw new Error("ردیفی در جدول پیدا نشد");
+    var headerCells = Array.prototype.slice.call(rows[0].querySelectorAll("th,td")).map(function(c){ return c.textContent.trim(); });
+    var colIdx = buildColumnIndex(headerCells);
+    var out = [];
+    rows.slice(1).forEach(function(tr){
+      var cells = Array.prototype.slice.call(tr.querySelectorAll("td,th")).map(getCellText);
+      if (!cells.length) return;
+      function get(key){ return colIdx[key] !== undefined && cells[colIdx[key]] !== undefined ? cells[colIdx[key]] : ""; }
+
+      var course = normalizeCourseName(get("course").replace(/\n/g, " "));
+      if (!course) return;
+      var professor = get("professor").replace(/\n/g, " ").replace(PERCENT_STRIP_REGEX, "").trim();
+      var day = normalizeDay(get("day").replace(/\n/g, " ").trim());
+      var times = get("time").match(TIME_REGEX_G) || [];
+      var timeStart = times[0] ? toPersianDigits(toEnglishDigits(times[0])) : "";
+      var timeEnd = times[1] ? toPersianDigits(toEnglishDigits(times[1])) : "";
+      var examCell = get("examDate");
+      var dm = examCell.match(DATE_REGEX);
+      var examDate = dm ? toPersianDigits(dm[0]) : "";
+      var examTimes = examCell.match(TIME_REGEX_G) || [];
+      var examTime = examTimes.length >= 2
+        ? toPersianDigits(toEnglishDigits(examTimes[0])) + " - " + toPersianDigits(toEnglishDigits(examTimes[1]))
+        : (examTimes.length === 1 ? toPersianDigits(toEnglishDigits(examTimes[0])) : "");
+      var location = get("location").replace(/\n/g, " ").replace(/مهندسی/g, "").replace(/\s+/g, " ").trim();
+      var isLab = !examDate && /آزمایشگاه/.test(course);
+
+      out.push({ day: day, course: course, time_start: timeStart, time_end: timeEnd, location: location, professor: professor, is_lab: isLab, exam_date: examDate, exam_time: examTime });
+    });
+    return out;
+  }
+
+  // ---------- logic-based parsing (no AI) ----------
+  // Plain-text-paste fallback (used when the input isn't HTML). Real
+  // copy-pasted table text puts each cell on its own line (and the header
+  // row is tab-separated), so this is anchored on the day name -- the one
+  // field guaranteed to appear exactly once per row -- rather than on any
+  // fixed line position. Irrelevant columns (units, attendance, session
+  // counts, group numbers, gender/status) are simply dropped as junk.
+
+  var ANCHOR_REGEX = /(شنبه|یکشنبه|دوشنبه|سه‌شنبه|سهشنبه|چهارشنبه|پنجشنبه|جمعه|[0-9۰-۹]{1,2}:[0-9۰-۹]{2}|[0-9۰-۹]{3,4}\/[0-9۰-۹]{1,2}\/[0-9۰-۹]{1,2}|مختلط|زن|مرد|کلاس|کارگاه|%)/g;
+  var DATE_REGEX = /[0-9۰-۹]{3,4}\/[0-9۰-۹]{1,2}\/[0-9۰-۹]{1,2}/;
+  var PAREN_NUM_REGEX = /[()]\s*[0-9۰-۹]+\s*[()]/;
+  var PAREN_NUM_REGEX_G = /[()]\s*[0-9۰-۹]+\s*[()]/g;
+  var PERCENT_STRIP_REGEX = /[()]?\s*[0-9۰-۹]*\s*%\s*[0-9۰-۹]*\s*[()]?/g;
+
+  var IGNORE_EXACT_LINES = [
+    "لیست کلاس‌ها","لیست کلاس ها","برنامه کلاسی هفتگی","ورود به lms","ورود به exam",
+    "مشاهده در lms","مشاهده در exam",
+    "درس","اساتید","جنسیت","وضعیت","نمره","واحد عملی","واحد تئوری","تعداد دانشجو",
+    "تعداد جلسات غیبت","گروه","مکان","روز","ساعت","تاریخ امتحان","آموزش","اطلاعات کاربری",
+    "فرآیندها","مالی","آزمون پایان نیمسال","دانشجویی","فرهنگی و ورزشی","برنامه‌ها"
+  ];
+
+  function isJunkLine(l){
+    var t = l.trim();
+    if (!t) return true;
+    var tl = t.toLowerCase();
+    if (/^[()]+$/.test(t)) return true;
+    if (IGNORE_EXACT_LINES.indexOf(tl) !== -1) return true;
+    if (/موسسه آموزش عالی|©/.test(t)) return true;
+    if (/^(مختلط|زن|مرد)$/.test(t)) return true;
+    if (/^(ناتمام|تمام)$/.test(t)) return true;
+    if (/جلسه/.test(t)) return true;
+    if (/^[0-9۰-۹]+(\.[0-9۰-۹]+)?$/.test(t)) return true;
+    return false;
+  }
+
+  function linesFromRawText(text){
+    var rawLines = String(text).split(/\r?\n|\t/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+    var out = [];
+    rawLines.forEach(function(line){
+      var matches = line.match(ANCHOR_REGEX);
+      var pieces = (matches && matches.length > 1)
+        ? line.replace(ANCHOR_REGEX, "\n$1").split(/\n+/).map(function(s){ return s.trim(); })
+        : [line];
+      pieces.forEach(function(p){ if (p && !isJunkLine(p)) out.push(p); });
+    });
+    return out;
+  }
+
+  function normalizeCourseName(s){
+    return s.replace(PAREN_NUM_REGEX_G, "").replace(/\s+/g, " ").trim();
+  }
+
+  // Sequential scan anchored on the day-name line: everything before it
+  // (back to the previous record's tail) is course + professor + location;
+  // everything after it, until a line with neither a time nor a date shows
+  // up, is this record's class time and optional exam date/time.
+  function parseLinesToRows(lines){
+    var records = [];
+    var cursor = 0;
+    while (cursor < lines.length){
+      var dayIdx = -1;
+      for (var i = cursor; i < lines.length; i++){ if (isDayLine(lines[i])) { dayIdx = i; break; } }
+      if (dayIdx === -1) break;
+
+      var beforeDay = lines.slice(cursor, dayIdx);
+      var locIdx = -1;
+      for (var j = beforeDay.length - 1; j >= 0; j--){ if (/کلاس|کارگاه/.test(beforeDay[j])) { locIdx = j; break; } }
+      var location, courseProfLines;
+      if (locIdx !== -1){
+        location = beforeDay[locIdx];
+        courseProfLines = beforeDay.slice(0, locIdx).concat(beforeDay.slice(locIdx + 1));
+      } else {
+        location = beforeDay.length ? beforeDay[beforeDay.length - 1] : "";
+        courseProfLines = beforeDay.slice(0, Math.max(beforeDay.length - 1, 0));
+      }
+      location = location.replace(/مهندسی/g, "").replace(/[()]/g, "").replace(/\s+/g, " ").trim();
+
+      var cleanCP = courseProfLines.map(function(l){ return l.replace(PERCENT_STRIP_REGEX, "").trim(); }).filter(function(l){ return l.length > 0; });
+      var splitIdx = -1;
+      for (var k = 0; k < cleanCP.length; k++){ if (PAREN_NUM_REGEX.test(cleanCP[k])) { splitIdx = k; break; } }
+      var courseLines, profLines;
+      if (splitIdx === -1){ courseLines = cleanCP; profLines = []; }
+      else { courseLines = cleanCP.slice(0, splitIdx + 1); profLines = cleanCP.slice(splitIdx + 1); }
+      var course = normalizeCourseName(courseLines.join(" "));
+      var professor = profLines.join(" ").replace(/\s+/g, " ").trim();
+
+      var day = lines[dayIdx];
+
+      var p = dayIdx + 1;
+      var timeMatches = [], dateMatch = "";
+      while (p < lines.length){
+        var l = lines[p];
+        var times = l.match(TIME_REGEX_G) || [];
+        var dm = l.match(DATE_REGEX);
+        if (!times.length && !dm) break;
+        timeMatches = timeMatches.concat(times);
+        if (dm && !dateMatch) dateMatch = dm[0];
+        p++;
+      }
+      cursor = p;
+
+      var timeStart = timeMatches[0] ? toPersianDigits(toEnglishDigits(timeMatches[0])) : "";
+      var timeEnd = timeMatches[1] ? toPersianDigits(toEnglishDigits(timeMatches[1])) : "";
+      var examParts = timeMatches.slice(2);
+      var examTime = examParts.length >= 2
+        ? toPersianDigits(toEnglishDigits(examParts[0])) + " - " + toPersianDigits(toEnglishDigits(examParts[1]))
+        : (examParts.length === 1 ? toPersianDigits(toEnglishDigits(examParts[0])) : "");
+      var examDate = dateMatch ? toPersianDigits(dateMatch) : "";
+      var isLab = !examDate && /آزمایشگاه/.test(course);
+
+      records.push({
+        day: normalizeDay(day),
+        course: course,
+        time_start: timeStart,
+        time_end: timeEnd,
+        location: location,
+        professor: professor,
+        is_lab: isLab,
+        exam_date: examDate,
+        exam_time: examTime
+      });
+    }
+    return records;
+  }
+
+  function parseWithLogic(rawText){
+    var statusEl = document.getElementById("parseStatus");
+    try {
+      var arr;
+      var looksLikeHtml = /<table\b/i.test(rawText) || /<html\b/i.test(rawText);
+      if (looksLikeHtml){
+        arr = parseHtmlTableToRows(rawText);
+      } else {
+        var lines = linesFromRawText(rawText);
+        arr = parseLinesToRows(lines);
+      }
+      if (!arr.length) throw new Error("هیچ ردیفی تشخیص داده نشد");
+      state.rows = arr;
+      setStatus(statusEl, arr.length + " کلاس شناسایی شد.", "ok");
+      showEditPanel();
+    } catch(e){
+      setStatus(statusEl, "استخراج ناموفق بود: " + (e && e.message ? e.message : "نامشخص"), "err");
+      if (!state.rows.length) state.rows = [blankRow()];
+      showEditPanel();
+    }
+  }
+
+  function setStatus(el, msg, kind){
+    el.className = "status" + (kind === "err" ? " err" : kind === "ok" ? " ok" : "");
+    el.innerHTML = kind === "loading" ? '<span class="spinner"></span><span>'+escapeHtml(msg)+'</span>' : escapeHtml(msg);
+  }
+
+  function blankRow(){
+    return { day:"شنبه", course:"", time_start:"", time_end:"", location:"", professor:"", is_lab:false, exam_date:"", exam_time:"" };
+  }
+
+  // ---------- edit panel ----------
+  function showEditPanel(){
+    document.getElementById("editPanel").hidden = false;
+    renderRows();
+    document.getElementById("editPanel").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  function renderRows(){
+    var container = document.getElementById("rowsContainer");
+    container.innerHTML = "";
+    if (!state.rows.length){
+      container.innerHTML = '<div class="empty-note">هنوز کلاسی اضافه نشده.</div>';
+      return;
+    }
+    state.rows.forEach(function(row, idx){
+      var card = document.createElement("div");
+      card.className = "rowcard";
+
+      var dayOptions = DAY_ORDER.map(function(d){
+        return '<option value="'+d+'"'+(row.day===d?' selected':'')+'>'+d+'</option>';
+      }).join("");
+
+      card.innerHTML =
+        '<div class="rowcard-top"><span class="idx">کلاس '+(idx+1)+'</span>'+
+        '<button class="btn-danger" data-act="del" data-idx="'+idx+'">حذف</button></div>'+
+        '<div class="field-grid">'+
+          '<div class="field full"><label>نام درس</label><input type="text" data-field="course" data-idx="'+idx+'" value="'+escapeHtml(row.course)+'"></div>'+
+          '<div class="field full"><label>روز</label><select data-field="day" data-idx="'+idx+'">'+dayOptions+'</select></div>'+
+          '<div class="field"><label>ساعت شروع</label><input type="text" data-field="time_start" data-idx="'+idx+'" value="'+escapeHtml(row.time_start)+'" placeholder="۱۸:۰۰"></div>'+
+          '<div class="field"><label>ساعت پایان</label><input type="text" data-field="time_end" data-idx="'+idx+'" value="'+escapeHtml(row.time_end)+'" placeholder="۲۰:۱۵"></div>'+
+          '<div class="field full"><label>مکان</label><input type="text" data-field="location" data-idx="'+idx+'" value="'+escapeHtml(row.location)+'" placeholder="کلاس ۴۲۶"></div>'+
+          '<div class="field full"><label>استاد</label><input type="text" data-field="professor" data-idx="'+idx+'" value="'+escapeHtml(row.professor)+'"></div>'+
+          '<div class="field"><label>تاریخ امتحان</label><input type="text" data-field="exam_date" data-idx="'+idx+'" value="'+escapeHtml(row.exam_date)+'" placeholder="۱۴۰۵/۱۰/۲۹"'+(row.is_lab?' disabled':'')+'></div>'+
+          '<div class="field"><label>ساعت امتحان</label><input type="text" data-field="exam_time" data-idx="'+idx+'" value="'+escapeHtml(row.exam_time)+'" placeholder="۱۱:۰۰ - ۱۲:۳۰"'+(row.is_lab?' disabled':'')+'></div>'+
+          '<label class="checkline"><input type="checkbox" data-field="is_lab" data-idx="'+idx+'"'+(row.is_lab?' checked':'')+'> امتحان آزمایشگاهی</label>'+
+        '</div>';
+      container.appendChild(card);
+    });
+  }
+
+  document.getElementById("rowsContainer").addEventListener("input", function(e){
+    var field = e.target.getAttribute("data-field");
+    var idx = e.target.getAttribute("data-idx");
+    if (field === null || idx === null) return;
+    idx = parseInt(idx, 10);
+    if (field === "is_lab"){
+      state.rows[idx].is_lab = e.target.checked;
+      renderRows();
+      return;
+    }
+    state.rows[idx][field] = e.target.value;
+  });
+  document.getElementById("rowsContainer").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-act='del']");
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute("data-idx"), 10);
+    state.rows.splice(idx, 1);
+    renderRows();
+  });
+  document.getElementById("addRowBtn").addEventListener("click", function(){
+    state.rows.push(blankRow());
+    renderRows();
+  });
+
+  // ---------- build & preview ----------
+  function sortedRows(){
+    return state.rows.slice().sort(function(a,b){
+      var da = DAY_ORDER.indexOf(normalizeDay(a.day));
+      var db = DAY_ORDER.indexOf(normalizeDay(b.day));
+      if (da !== db) return da - db;
+      return timeToMinutes(a.time_start) - timeToMinutes(b.time_start);
+    });
+  }
+
+  // Format exam information as distinct date and time fields for clarity.
+  // Lab courses use the Persian label in both preview and downloaded output.
+  function examDisplayHtml(row){
+    if (row.is_lab){
+      return '<div class="sched-exam"><span class="exam-badge lab">امتحان آزمایشگاهی</span></div>';
+    }
+    var fields = [];
+    var examDate = (row.exam_date || "").trim();
+    var examTime = (row.exam_time || "").trim();
+    if (examDate){
+      fields.push('<span class="exam-badge exam-date"><span class="exam-label">تاریخ امتحان</span><span class="exam-separator">:</span><span class="exam-value">'+escapeHtml(examDate)+'</span></span>');
+    }
+    if (examTime){
+      fields.push('<span class="exam-badge exam-time"><span class="exam-label">ساعت امتحان</span><span class="exam-separator">:</span><span class="exam-value">'+escapeHtml(examTime)+'</span></span>');
+    }
+    return fields.length ? '<div class="sched-exam">'+fields.join("")+'</div>' : "";
+  }
+
+  // Render each class once; the live preview and downloaded HTML share this markup.
+  function rowHtml(row){
+    var day = normalizeDay(row.day);
+    var color = DAY_COLORS[day] || "#334155";
+    var timeStr = (row.time_start||"") + (row.time_end ? " – "+row.time_end : "");
+    return (
+      '<div class="sched-row">'+
+        '<div class="sched-day" style="background:'+color+';">'+escapeHtml(day)+'</div>'+
+        '<div class="sched-info">'+
+          '<div class="sched-course">'+escapeHtml(row.course||"—")+'</div>'+
+          '<div class="sched-meta">'+
+            (timeStr.trim() ? '<span class="sched-time">🕐 '+escapeHtml(timeStr)+'</span>' : '')+
+            (row.location ? '<span class="sched-location">📍 '+escapeHtml(row.location)+'</span>' : '')+
+            (row.professor ? '<span class="sched-prof">👤 '+escapeHtml(row.professor)+'</span>' : '')+
+          '</div>'+ examDisplayHtml(row)+
+        '</div>'+
+      '</div>'
+    );
+  }
+  function buildScheduleFragment(){
+    var rows = sortedRows();
+    var rowsHtml = rows.length ? rows.map(rowHtml).join("") : '<div class="sched-info"><div class="sched-course">هیچ کلاسی ثبت نشده</div></div>';
+    return (
+      '<div class="sched-page" data-style="'+escapeHtml(selectedScheduleStyle)+'">'+
+        '<div class="sched-header"><span class="title">📅 '+escapeHtml(state.scheduleTitle)+' 📅</span></div>'+
+        '<div class="sched-card">'+rowsHtml+'</div>'+
+      '</div>'
+    );
+  }
+  // Build a standalone schedule file with the selected theme and shared row markup.
+  function standaloneHtml(){
+    var visualCss = document.getElementById("scheduleVisualStyles").textContent;
+    return [
+      '<!DOCTYPE html>',
+      '<html lang="fa" dir="rtl">',
+      '<head>',
+      '<meta charset="UTF-8">',
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">',
+      '<title>'+escapeHtml(state.scheduleTitle)+'</title>',
+      '<style>',
+      "@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');",
+      'body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6}',
+      visualCss,
+      '</style>',
+      '</head>',
+      '<body>',
+      buildScheduleFragment(),
+      '</body>',
+      '</html>'
+    ].join("\n");
+  }
+  function showPreview(){
+    document.getElementById("previewPanel").hidden = false;
+    document.getElementById("previewWrap").innerHTML = buildScheduleFragment();
+    document.getElementById("previewPanel").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  document.getElementById("scheduleStyleSelect").addEventListener("change", function(){
+    selectedScheduleStyle = this.value;
+    if (!document.getElementById("previewPanel").hidden){
+      document.getElementById("previewWrap").innerHTML = buildScheduleFragment();
+    }
+  });
+  document.getElementById("buildBtn").addEventListener("click", function(){
+    showPreview();
+  });
+
+  document.getElementById("downloadBtn").addEventListener("click", function(){
+    var statusEl = document.getElementById("downloadStatus");
+    try {
+      var blob = new Blob([standaloneHtml()], { type: "text/html" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "schedule.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus(statusEl, "ذخیره شد.", "ok");
+    } catch(e){
+      setStatus(statusEl, "خطا در ذخیره.", "err");
+    }
+  });
+
+  // Export an opaque JPEG with a background matched to the selected schedule theme.
+  function imageBackgroundForStyle(style){
+    var colors = {
+      "night":"#24243e",
+      "night-light":"#f0f2f7",
+      "light-cards":"#f1eee8",
+      "purple-cards":"#171321"
+    };
+    return colors[style] || colors.night;
+  }
+  document.getElementById("downloadImgBtn").addEventListener("click", async function(){
+    var statusEl = document.getElementById("downloadStatus");
+    if (!window.html2canvas){
+      setStatus(statusEl, "کتابخانه تصویرسازی بارگذاری نشد (اتصال اینترنت لازم است).", "err");
+      return;
+    }
+    setStatus(statusEl, "در حال آماده‌سازی تصویر...", "loading");
+    try {
+      var target = document.querySelector("#previewWrap .sched-page");
+      var canvas = await html2canvas(target, {
+        backgroundColor: imageBackgroundForStyle(selectedScheduleStyle),
+        scale: 3,
+        useCORS: true
+      });
+      await new Promise(function(resolve, reject){
+        canvas.toBlob(function(blob){
+          if (!blob) { reject(new Error("blob failed")); return; }
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          a.download = "schedule.jpeg";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          resolve();
+        }, "image/jpeg", 0.98);
+      });
+      setStatus(statusEl, "تصویر JPEG ذخیره شد.", "ok");
+    } catch(e){
+      setStatus(statusEl, "خطا در ساخت تصویر: " + (e && e.message ? e.message : "نامشخص"), "err");
+    }
+  });
+
+  // ---------- input wiring ----------
+  var fileInput = document.getElementById("fileInput");
+  var fileBtn = document.getElementById("fileBtn");
+  var fileNameDisplay = document.getElementById("fileNameDisplay");
+  var pendingFile = null;
+
+  fileBtn.addEventListener("click", function(){ fileInput.click(); });
+  fileInput.addEventListener("change", function(){
+    if (fileInput.files && fileInput.files[0]){
+      pendingFile = fileInput.files[0];
+      fileNameDisplay.textContent = pendingFile.name;
+      document.getElementById("pasteText").value = "";
+    }
+  });
+  document.getElementById("pasteText").addEventListener("input", function(){
+    if (this.value.trim()) { pendingFile = null; fileNameDisplay.textContent = ""; fileInput.value = ""; }
+  });
+
+  document.getElementById("manualBtn").addEventListener("click", function(){
+    if (!state.rows.length) state.rows = [blankRow()];
+    showEditPanel();
+  });
+
+  document.getElementById("parseBtn").addEventListener("click", async function(){
+    var statusEl = document.getElementById("parseStatus");
+    var pasted = document.getElementById("pasteText").value.trim();
+    if (!pendingFile && !pasted){
+      setStatus(statusEl, "فایل یا متن وارد کن.", "err");
+      return;
+    }
+    try{
+      var rawText = pasted;
+      if (!rawText && pendingFile){
+        setStatus(statusEl, "در حال خواندن فایل...", "loading");
+        rawText = await pendingFile.text();
+      }
+      if (!rawText || !rawText.trim()){
+        setStatus(statusEl, "متنی از فایل استخراج نشد.", "err");
+        return;
+      }
+      parseWithLogic(rawText);
+    } catch(e){
+      setStatus(statusEl, "خطا: " + (e && e.message ? e.message : "نامشخص"), "err");
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
