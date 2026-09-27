@@ -679,19 +679,25 @@
       '<html lang="fa" dir="rtl">',
       '<head>',
       '<meta charset="UTF-8">',
-      // Give mobile browsers a stable 420px design viewport, including 12px body gutters.
-      // They scale this fixed canvas to the device instead of reflowing the schedule rows.
-      '<meta name="viewport" content="width=444, initial-scale=1">',
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
       '<title>'+escapeHtml(state.scheduleTitle)+'</title>',
       '<style>',
       "@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');",
-      'body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6}',
+      'body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6;overflow-x:hidden}',
       visualCss,
-      '.sched-page{width:420px;max-width:420px}',
+      /* Preserve the JPEG's fixed layout, then scale the complete frame for narrow screens. */
+      '.sched-page{width:420px;max-width:420px;box-sizing:border-box;padding:10px}',
+      '.sched-page .sched-row{grid-template-columns:72px minmax(0,1fr)}',
+      '.sched-page .sched-info{padding:10px 12px}',
+      '.sched-page .sched-meta{font-size:.69rem;gap:5px 10px}',
+      '.sched-page .sched-course{font-size:.88rem}',
+      '#scheduleViewport{display:flex;justify-content:center;width:100%;overflow:visible}',
+      '#scheduleScale{width:420px;flex:0 0 420px;transform-origin:top center}',
       '</style>',
       '</head>',
       '<body>',
-      buildScheduleFragment(),
+      '<div id="scheduleViewport"><div id="scheduleScale">'+buildScheduleFragment()+'</div></div>',
+      '<script>(function(){var viewport=document.getElementById("scheduleViewport");var scaleFrame=document.getElementById("scheduleScale");var schedule=scaleFrame.querySelector(".sched-page");function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/420);scaleFrame.style.transform="scale("+scale+")";viewport.style.height=(schedule.offsetHeight*scale)+"px";}window.addEventListener("resize",fitSchedule);window.addEventListener("orientationchange",fitSchedule);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();</script>',
       '</body>',
       '</html>'
     ].join("\n");
