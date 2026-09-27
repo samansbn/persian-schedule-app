@@ -96,7 +96,7 @@ showEditPanel();</code></pre></div></section>
 }
 // Preview inserts this fragment; HTML export wraps the same fragment.</code></pre></div></section>
 
-<section class="section" id="exports"><header><span class="num">09</span><h2>Standalone HTML and JPEG output</h2></header><div class="flow"><div><strong>HTML</strong><br><code>standaloneHtml()</code> wraps the shared schedule fragment in a complete document and includes its schedule styles.</div><div><strong>JPEG</strong><br><code>html2canvas</code> captures the rendered schedule element and converts the canvas to a downloadable JPEG.</div><div><strong>Image settings</strong><br>The capture uses an opaque style-matched background, 3× scale, and 98% JPEG quality.</div></div><p>The JPEG button is the primary action and appears above HTML download. <code>imageBackgroundForStyle()</code> selects a compatible canvas background for each theme. The export handler checks that <code>html2canvas</code> is available, shows status/errors, and triggers a <code>.jpeg</code> download. HTML export is separate and does not require canvas support. Both operations remain client-side.</p></section>
+<section class="section" id="exports"><header><span class="num">09</span><h2>Standalone HTML and JPEG output</h2></header><div class="flow"><div><strong>HTML</strong><br><code>standaloneHtml()</code> wraps the shared schedule fragment in a complete document and includes its schedule styles.</div><div><strong>JPEG</strong><br><code>html2canvas</code> captures the rendered schedule element and converts the canvas to a downloadable JPEG.</div><div><strong>Image settings</strong><br>The capture uses an opaque style-matched background, 3× scale, and 98% JPEG quality.</div></div><p>The JPEG button is the primary action and appears above HTML download. <code>imageBackgroundForStyle()</code> selects a compatible canvas background for each theme. The export handler checks that <code>html2canvas</code> is available, shows status/errors, and triggers a <code>.jpeg</code> download. HTML export is separate and does not require canvas support. Both operations remain client-side. In standalone HTML, a fixed 420px schedule canvas and 444px layout viewport let mobile browsers scale the whole composition down without changing row structure or wrapping.</p></section>
 
 <section class="section" id="events"><header><span class="num">10</span><h2>Event wiring and the full source</h2></header><p>The final script section connects the visible controls: file picker, pasted text, automatic extraction, manual editor, add/delete row, generate preview, theme selector, and downloads. Choosing a file clears pasted text, and typing clears the selected file so stale input cannot be parsed accidentally. The schedule-style listener refreshes the preview immediately when it is visible.</p><p>The execution path is: <span class="tag">read input</span> → <span class="tag">parse records</span> → <span class="tag">review/edit</span> → <span class="tag">build preview</span> → <span class="tag">export</span>. No timetable content is sent to a server.</p><p>The complete listing below is an HTML-escaped, non-executing copy of the deployed <code>index.html</code>, including all markup, CSS, parsing logic, editor behavior, and export functions. The shorter blocks are explanatory examples that map the main ideas; consult this listing for the exact implementation.</p></section>
 
@@ -781,12 +781,15 @@ showEditPanel();</code></pre></div></section>
       &#39;&lt;html lang=&quot;fa&quot; dir=&quot;rtl&quot;&gt;&#39;,
       &#39;&lt;head&gt;&#39;,
       &#39;&lt;meta charset=&quot;UTF-8&quot;&gt;&#39;,
-      &#39;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0&quot;&gt;&#39;,
+      // Give mobile browsers a stable 420px design viewport, including 12px body gutters.
+      // They scale this fixed canvas to the device instead of reflowing the schedule rows.
+      &#39;&lt;meta name=&quot;viewport&quot; content=&quot;width=444, initial-scale=1&quot;&gt;&#39;,
       &#39;&lt;title&gt;&#39;+escapeHtml(state.scheduleTitle)+&#39;&lt;/title&gt;&#39;,
       &#39;&lt;style&gt;&#39;,
       &quot;@import url(&#39;https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&amp;display=swap&#39;);&quot;,
       &#39;body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6}&#39;,
       visualCss,
+      &#39;.sched-page{width:420px;max-width:420px}&#39;,
       &#39;&lt;/style&gt;&#39;,
       &#39;&lt;/head&gt;&#39;,
       &#39;&lt;body&gt;&#39;,
