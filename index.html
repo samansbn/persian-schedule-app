@@ -679,12 +679,15 @@
       '<html lang="fa" dir="rtl">',
       '<head>',
       '<meta charset="UTF-8">',
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">',
+      // Give mobile browsers a stable 420px design viewport, including 12px body gutters.
+      // They scale this fixed canvas to the device instead of reflowing the schedule rows.
+      '<meta name="viewport" content="width=444, initial-scale=1">',
       '<title>'+escapeHtml(state.scheduleTitle)+'</title>',
       '<style>',
       "@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');",
       'body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6}',
       visualCss,
+      '.sched-page{width:420px;max-width:420px}',
       '</style>',
       '</head>',
       '<body>',
