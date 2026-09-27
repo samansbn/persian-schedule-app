@@ -139,7 +139,7 @@
 
   #previewWrap{ max-width:420px; margin:0 auto; }
   .style-field{display:flex;flex-direction:column;gap:5px;margin:0 0 14px}.style-field label{font-size:.75rem;color:var(--muted)}
-  .download-actions{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .download-actions{margin-top:12px}
   .download-actions button{width:100%}
   .empty-note{ text-align:center; color:var(--muted); font-size:0.85rem; padding:20px 10px; }
 
@@ -224,7 +224,6 @@
       <div id="previewWrap"></div>
       <div class="download-actions" aria-label="دریافت برنامه">
         <button class="btn-primary" id="downloadImgBtn">ذخیره به‌صورت JPEG</button>
-        <button class="btn-secondary" id="downloadBtn">دانلود فایل HTML</button>
       </div>
       <div class="status" id="downloadStatus"></div>
     </div>
@@ -642,7 +641,7 @@
     return fields.length ? '<div class="sched-exam">'+fields.join("")+'</div>' : "";
   }
 
-  // Render each class once; the live preview and downloaded HTML share this markup.
+  // Render each class once; the live preview and fixed-width JPEG renderer share this markup.
   function rowHtml(row){
     var day = normalizeDay(row.day);
     var color = DAY_COLORS[day] || "#334155";
@@ -671,37 +670,6 @@
       '</div>'
     );
   }
-  // Build a standalone schedule file with the selected theme and shared row markup.
-  function standaloneHtml(){
-    var visualCss = document.getElementById("scheduleVisualStyles").textContent;
-    return [
-      '<!DOCTYPE html>',
-      '<html lang="fa" dir="rtl">',
-      '<head>',
-      '<meta charset="UTF-8">',
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '<title>'+escapeHtml(state.scheduleTitle)+'</title>',
-      '<style>',
-      "@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');",
-      'body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6;overflow-x:hidden}',
-      visualCss,
-      /* Match the JPEG's 3× (1263px) canvas, then fit the full frame on narrow screens. */
-      '.sched-page{width:421px;max-width:none;box-sizing:border-box;padding:10px;margin:0;transform:scale(3);transform-origin:top left}',
-      '.sched-page .sched-row{grid-template-columns:72px minmax(0,1fr)}',
-      '.sched-page .sched-info{padding:10px 12px}',
-      '.sched-page .sched-meta{font-size:.69rem;gap:5px 10px}',
-      '.sched-page .sched-course{font-size:.88rem}',
-      '#scheduleViewport{display:flex;justify-content:center;width:100%;overflow:visible}',
-      '#scheduleScale{width:1263px;flex:0 0 1263px;transform-origin:top center}',
-      '</style>',
-      '</head>',
-      '<body>',
-      '<div id="scheduleViewport"><div id="scheduleScale">'+buildScheduleFragment()+'</div></div>',
-      '<script>(function(){var viewport=document.getElementById("scheduleViewport");var scaleFrame=document.getElementById("scheduleScale");var schedule=scaleFrame.querySelector(".sched-page");function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/1263);scaleFrame.style.transform="scale("+scale+")";viewport.style.height=(schedule.offsetHeight*3*scale)+"px";}window.addEventListener("resize",fitSchedule);window.addEventListener("orientationchange",fitSchedule);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();<\/script>',
-      '</body>',
-      '</html>'
-    ].join("\n");
-  }
   function showPreview(){
     document.getElementById("previewPanel").hidden = false;
     document.getElementById("previewWrap").innerHTML = buildScheduleFragment();
@@ -716,24 +684,6 @@
   });
   document.getElementById("buildBtn").addEventListener("click", function(){
     showPreview();
-  });
-
-  document.getElementById("downloadBtn").addEventListener("click", function(){
-    var statusEl = document.getElementById("downloadStatus");
-    try {
-      var blob = new Blob([standaloneHtml()], { type: "text/html" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "schedule.html";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setStatus(statusEl, "ذخیره شد.", "ok");
-    } catch(e){
-      setStatus(statusEl, "خطا در ذخیره.", "err");
-    }
   });
 
   // Export an opaque JPEG with a background matched to the selected schedule theme.
@@ -753,11 +703,30 @@
       return;
     }
     setStatus(statusEl, "در حال آماده‌سازی تصویر...", "loading");
+    var exportStage = null;
     try {
-      var target = document.querySelector("#previewWrap .sched-page");
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      exportStage = document.createElement("div");
+      exportStage.id = "jpegExportStage";
+      exportStage.style.cssText = "position:fixed;left:-10000px;top:0;width:421px;z-index:-1;pointer-events:none;";
+      var exportStyle = document.createElement("style");
+      exportStyle.textContent =
+        "#jpegExportStage .sched-page{width:421px!important;max-width:none!important;box-sizing:border-box!important;margin:0!important;padding:10px!important;transform:none!important}"+
+        "#jpegExportStage .sched-row{grid-template-columns:72px minmax(0,1fr)!important}"+
+        "#jpegExportStage .sched-info{padding:10px 12px!important}"+
+        "#jpegExportStage .sched-meta{font-size:.69rem!important;gap:5px 10px!important}"+
+        "#jpegExportStage .sched-course{font-size:.88rem!important}";
+      exportStage.appendChild(exportStyle);
+      var exportMarkup = document.createElement("div");
+      exportMarkup.innerHTML = buildScheduleFragment();
+      exportStage.appendChild(exportMarkup);
+      document.body.appendChild(exportStage);
+      var target = exportStage.querySelector(".sched-page");
       var canvas = await html2canvas(target, {
         backgroundColor: imageBackgroundForStyle(selectedScheduleStyle),
         scale: 3,
+        width: 421,
+        windowWidth: 421,
         useCORS: true
       });
       await new Promise(function(resolve, reject){
@@ -777,6 +746,8 @@
       setStatus(statusEl, "تصویر JPEG ذخیره شد.", "ok");
     } catch(e){
       setStatus(statusEl, "خطا در ساخت تصویر: " + (e && e.message ? e.message : "نامشخص"), "err");
+    } finally {
+      if (exportStage && exportStage.parentNode) exportStage.parentNode.removeChild(exportStage);
     }
   });
 
@@ -830,6 +801,7 @@
 </script>
 </body>
 </html>
+
 
 
 
