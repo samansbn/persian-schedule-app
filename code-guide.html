@@ -799,7 +799,7 @@ showEditPanel();</code></pre></div></section>
       &#39;&lt;/head&gt;&#39;,
       &#39;&lt;body&gt;&#39;,
       &#39;&lt;div id=&quot;scheduleViewport&quot;&gt;&lt;div id=&quot;scheduleScale&quot;&gt;&#39;+buildScheduleFragment()+&#39;&lt;/div&gt;&lt;/div&gt;&#39;,
-      &#39;&lt;script&gt;(function(){var viewport=document.getElementById(&quot;scheduleViewport&quot;);var scaleFrame=document.getElementById(&quot;scheduleScale&quot;);var schedule=scaleFrame.querySelector(&quot;.sched-page&quot;);function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/420);scaleFrame.style.transform=&quot;scale(&quot;+scale+&quot;)&quot;;viewport.style.height=(schedule.offsetHeight*scale)+&quot;px&quot;;}window.addEventListener(&quot;resize&quot;,fitSchedule);window.addEventListener(&quot;orientationchange&quot;,fitSchedule);if(document.fonts&amp;&amp;document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();&lt;/script&gt;&#39;,
+      &#39;&lt;script&gt;(function(){var viewport=document.getElementById(&quot;scheduleViewport&quot;);var scaleFrame=document.getElementById(&quot;scheduleScale&quot;);var schedule=scaleFrame.querySelector(&quot;.sched-page&quot;);function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/420);scaleFrame.style.transform=&quot;scale(&quot;+scale+&quot;)&quot;;viewport.style.height=(schedule.offsetHeight*scale)+&quot;px&quot;;}window.addEventListener(&quot;resize&quot;,fitSchedule);window.addEventListener(&quot;orientationchange&quot;,fitSchedule);if(document.fonts&amp;&amp;document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();&lt;\/script&gt;&#39;,
       &#39;&lt;/body&gt;&#39;,
       &#39;&lt;/html&gt;&#39;
     ].join(&quot;\n&quot;);
