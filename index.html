@@ -697,7 +697,7 @@
       '</head>',
       '<body>',
       '<div id="scheduleViewport"><div id="scheduleScale">'+buildScheduleFragment()+'</div></div>',
-      '<script>(function(){var viewport=document.getElementById("scheduleViewport");var scaleFrame=document.getElementById("scheduleScale");var schedule=scaleFrame.querySelector(".sched-page");function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/420);scaleFrame.style.transform="scale("+scale+")";viewport.style.height=(schedule.offsetHeight*scale)+"px";}window.addEventListener("resize",fitSchedule);window.addEventListener("orientationchange",fitSchedule);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();</script>',
+      '<script>(function(){var viewport=document.getElementById("scheduleViewport");var scaleFrame=document.getElementById("scheduleScale");var schedule=scaleFrame.querySelector(".sched-page");function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/420);scaleFrame.style.transform="scale("+scale+")";viewport.style.height=(schedule.offsetHeight*scale)+"px";}window.addEventListener("resize",fitSchedule);window.addEventListener("orientationchange",fitSchedule);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();<\/script>',
       '</body>',
       '</html>'
     ].join("\n");
