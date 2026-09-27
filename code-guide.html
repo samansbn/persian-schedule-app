@@ -100,7 +100,7 @@ showEditPanel();</code></pre></div></section>
 
 <section class="section" id="events"><header><span class="num">10</span><h2>Event wiring and the full source</h2></header><p>The final script section connects the visible controls: file picker, pasted text, automatic extraction, manual editor, add/delete row, generate preview, theme selector, and downloads. Choosing a file clears pasted text, and typing clears the selected file so stale input cannot be parsed accidentally. The schedule-style listener refreshes the preview immediately when it is visible.</p><p>The execution path is: <span class="tag">read input</span> → <span class="tag">parse records</span> → <span class="tag">review/edit</span> → <span class="tag">build preview</span> → <span class="tag">export</span>. No timetable content is sent to a server.</p><p>The complete listing below is an HTML-escaped, non-executing copy of the deployed <code>index.html</code>, including all markup, CSS, parsing logic, editor behavior, and export functions. The shorter blocks are explanatory examples that map the main ideas; consult this listing for the exact implementation.</p></section>
 
-<details class="full-source"><summary>Complete source · index.html</summary><p>Exact app source at the time this guide was generated. Code is escaped for safe display and is not run on this page.</p><div class="snippet"><div class="snippet-label">index.html · complete source</div><pre><code><!-- &lt;!DOCTYPE html&gt;
+<details class="full-source"><summary>Complete source · index.html</summary><p>Exact app source at the time this guide was generated. Code is escaped for safe display and is not run on this page.</p><div class="snippet"><div class="snippet-label">index.html · complete source</div><pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;fa&quot; dir=&quot;rtl&quot;&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;UTF-8&quot;&gt;
@@ -930,6 +930,6 @@ showEditPanel();</code></pre></div></section>
 
 
 
- --></code></pre></div></details>
+</code></pre></div></details>
 <p class="footer">For installation, usage, parser notes, deployment, and maintenance instructions, see the repository <a href="https://github.com/samansbn/persian-schedule-app#readme">README</a>. Return to the <a href="index.html">schedule app</a>.</p>
 </main></body></html>
