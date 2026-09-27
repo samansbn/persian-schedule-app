@@ -11,7 +11,7 @@ A mobile-first, right-to-left schedule builder for turning a class timetable int
 - Detect common Persian timetable columns and normalize weekdays and Persian/Arabic digits.
 - Review and edit extracted classes before creating the schedule.
 - Add or delete classes manually; set weekdays, class times, location, instructor, exam date/time, and lab-exam status.
-- Choose one of four schedule appearances: **شبانه**, **شبانه روشن**, **کارت روشن**, and **کارت بنفش**.
+- Choose one of four schedule appearances, with bilingual names: **Nightfall · شبانه**, **Moonlit · شبانه روشن**, **Sandstone Cards · کارت روشن**, and **Violet Cards · کارت بنفش**.
 - Download a standalone HTML schedule or an opaque JPEG image (`schedule.jpeg`). The image is rendered at 3× scale and 98% JPEG quality.
 - View the app and schedule in a responsive, mobile-first RTL layout.
 
@@ -42,12 +42,25 @@ The app has no backend. File reading, parsing, editing, and schedule generation 
 
 The app-theme preference is stored locally in `localStorage` under `scheduleAppTheme`. It does not store timetable contents.
 
+## Code walkthrough
+
+Open the **`</>`** icon in the app's top-right corner to read the [section-by-section code walkthrough](https://samansbn.github.io/persian-schedule-app/code-guide.html). It explains the document structure, both CSS systems, theme handling, parsing routes, editable state, schedule rendering, and HTML/JPEG exports. Formatted excerpts are followed by an expandable, escaped copy of the complete deployed `index.html` source. The guide is a separate static page and does not execute the displayed source.
+
+The style dropdown keeps stable internal IDs (`night`, `night-light`, `light-cards`, `purple-cards`) while displaying these readable bilingual names:
+
+| ID | English name | Persian name |
+| --- | --- | --- |
+| `night` | Nightfall | شبانه |
+| `night-light` | Moonlit | شبانه روشن |
+| `light-cards` | Sandstone Cards | کارت روشن |
+| `purple-cards` | Violet Cards | کارت بنفش |
+
 ## Repository layout
 
 ```text
 .
 ├── index.html                 # The complete browser app and deployed home page
-├── code-guide.html            # Separate, section-by-section code walkthrough page
+├── code-guide.html            # Responsive guide with formatted excerpts and full source listing
 ├── README.md                  # Project, usage, architecture, and deployment notes
 └── .github/workflows/
     └── pages.yml              # Publishes the static site to GitHub Pages
