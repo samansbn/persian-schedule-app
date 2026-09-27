@@ -13,7 +13,7 @@ A mobile-first, right-to-left schedule builder for turning a class timetable int
 - Add or delete classes manually; set weekdays, class times, location, instructor, exam date/time, and lab-exam status.
 - Choose one of four schedule appearances, with bilingual names: **Nightfall · شبانه**, **Moonlit · شبانه روشن**, **Sandstone Cards · کارت روشن**, and **Violet Cards · کارت بنفش**.
 - Download a standalone HTML schedule or an opaque JPEG image (`schedule.jpeg`). The image is rendered at 3× scale and 98% JPEG quality.
-- View the app in a responsive, mobile-first RTL layout. The standalone schedule HTML keeps a fixed 420px design canvas and scales the entire frame to fit phone screens, preserving row proportions and wrapping.
+- View the app in a responsive, mobile-first RTL layout. The standalone schedule HTML uses a fixed 1263px canvas matching the 3× JPEG dimensions and scales the entire frame to fit phone screens, preserving row proportions and wrapping.
 
 ## Quick start
 
