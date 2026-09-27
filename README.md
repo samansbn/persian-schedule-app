@@ -12,8 +12,8 @@ A mobile-first, right-to-left schedule builder for turning a class timetable int
 - Review and edit extracted classes before creating the schedule.
 - Add or delete classes manually; set weekdays, class times, location, instructor, exam date/time, and lab-exam status.
 - Choose one of four schedule appearances, with bilingual names: **Nightfall · شبانه**, **Moonlit · شبانه روشن**, **Sandstone Cards · کارت روشن**, and **Violet Cards · کارت بنفش**.
-- Download a standalone HTML schedule or an opaque JPEG image (`schedule.jpeg`). The image is rendered at 3× scale and 98% JPEG quality.
-- View the app in a responsive, mobile-first RTL layout. The standalone schedule HTML uses a fixed 1263px canvas matching the 3× JPEG dimensions and scales the entire frame to fit phone screens, preserving row proportions and wrapping.
+- Download an opaque JPEG image (`schedule.jpeg`) from a fixed 421px render canvas at 3× scale, producing a 1263px-wide image at 98% JPEG quality regardless of the phone preview width or zoom.
+- Use the app in a responsive, mobile-first RTL layout. JPEG export renders a separate fixed-width canvas so device zoom and mobile reflow do not change the saved image dimensions.
 
 ## Quick start
 
@@ -21,8 +21,8 @@ A mobile-first, right-to-left schedule builder for turning a class timetable int
 2. Choose **انتخاب فایل HTML** to import an `.html`/`.htm` timetable, or paste the source/text into the input area.
 3. Select **استخراج خودکار**. The app opens the review step with the detected classes.
 4. Edit any fields, add/delete rows as needed, and select **تولید برنامه**.
-5. Pick a schedule style. The selection updates the preview and is included in the standalone HTML download.
-6. Choose **ذخیره به‌صورت JPEG** for an image, or **دانلود فایل HTML** for a standalone schedule page.
+5. Pick a schedule style. The selection updates the preview and is used for the JPEG image.
+6. Choose **ذخیره به‌صورت JPEG** to save the schedule image.
 
 You can also skip extraction and choose **حالت دستی** to start with an editable blank class.
 
@@ -38,13 +38,13 @@ The fallback parser scans copied text for weekday anchors and nearby time/date v
 
 ## Privacy and external resources
 
-The app has no backend. File reading, parsing, editing, and schedule generation run in the browser; timetable contents are not uploaded by this app. The page loads the Vazirmatn font from Google Fonts and `html2canvas` 1.4.1 from cdnjs. Those services receive their normal asset requests. JPEG export requires `html2canvas` to have loaded; importing, editing, previewing, and HTML export do not depend on it.
+The app has no backend. File reading, parsing, editing, and schedule generation run in the browser; timetable contents are not uploaded by this app. The page loads the Vazirmatn font from Google Fonts and `html2canvas` 1.4.1 from cdnjs. Those services receive their normal asset requests. JPEG export requires `html2canvas` to have loaded; importing, editing, and previewing do not depend on it.
 
 The app-theme preference is stored locally in `localStorage` under `scheduleAppTheme`. It does not store timetable contents.
 
 ## Code walkthrough
 
-Open the **`</>`** icon in the app's top-right corner to read the [section-by-section code walkthrough](https://samansbn.github.io/persian-schedule-app/code-guide.html). It explains the document structure, both CSS systems, theme handling, parsing routes, editable state, schedule rendering, and HTML/JPEG exports. Formatted excerpts are followed by an expandable, escaped copy of the complete deployed `index.html` source. The guide is a separate static page and does not execute the displayed source.
+Open the **`</>`** icon in the app's top-right corner to read the [section-by-section code walkthrough](https://samansbn.github.io/persian-schedule-app/code-guide.html). It explains the document structure, both CSS systems, theme handling, parsing routes, editable state, schedule rendering, and fixed-canvas JPEG export. Formatted excerpts are followed by an expandable, escaped copy of the complete deployed `index.html` source. The guide is a separate static page and does not execute the displayed source.
 
 The style dropdown keeps stable internal IDs (`night`, `night-light`, `light-cards`, `purple-cards`) while displaying these readable bilingual names:
 
@@ -87,16 +87,17 @@ GitHub Pages requires a public repository on GitHub Free. A custom workflow pack
 - HTML table parsing uses the browser's `DOMParser`.
 - The plain-text parser uses heuristics; inspect the review step for ambiguous or irregular source text.
 - JPEG export depends on the CDN-hosted `html2canvas` script and browser canvas support.
-- The standalone schedule preserves the selected appearance and schedule data, but it remains a client-generated HTML file.
+- JPEG export renders a 421 CSS-pixel fixed canvas at 3× scale (1263px image width), independently of the responsive on-screen preview.
 
 ## Maintenance notes
 
 - Add supported column-heading aliases in `HEADER_MAP` in `index.html`.
 - Adjust recognized weekday names in `DAY_ORDER`, `DAY_COMPACT`, `isDayLine`, and `normalizeDay` together.
-- Keep the export row markup in `rowHtml()` shared by the live preview and downloaded HTML.
-- Add any new schedule theme to the style dropdown, `.sched-page[data-style="…"]` CSS, and `imageBackgroundForStyle()` so preview, HTML, and JPEG output stay aligned.
+- Keep the export row markup in `rowHtml()` shared by the live preview and fixed-canvas JPEG renderer.
+- Add any new schedule theme to the style dropdown, `.sched-page[data-style="…"]` CSS, and `imageBackgroundForStyle()` so preview and JPEG output stay aligned.
 - Keep the GitHub Pages workflow's minimum permissions scoped to reading repository contents and deploying Pages artifacts.
 
 ## License
 
 No license is currently declared. Ask the repository owner before reusing or redistributing this project.
+
