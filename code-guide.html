@@ -14,7 +14,7 @@
 <h1>How the app works</h1>
 <p class="lead">A source-ordered walkthrough of the complete single-file app: layout, theme styles, parsing, editing, rendering, and exports. Focused examples below explain the key patterns; the exact complete source is available at the end.</p>
 <div class="callout"><strong>How to use this page.</strong> Read the architecture notes first, then follow the data from input to preview/export. Code blocks are formatted for horizontal scrolling on a phone. Open “Complete source” for every line of the deployed app. This documentation page does not load or execute that source.</div>
-<nav class="toc" aria-label="Sections"><strong>Sections</strong><ol><li><a href="#shell">Document shell and controls</a></li><li><a href="#css">App and schedule CSS</a></li><li><a href="#theme">App theme toggle</a></li><li><a href="#helpers">Constants and helpers</a></li><li><a href="#html-parser">HTML table parser</a></li><li><a href="#text-parser">Pasted-text parser</a></li><li><a href="#editor">Editable rows</a></li><li><a href="#render">Sorting and schedule markup</a></li><li><a href="#exports">HTML and JPEG export</a></li><li><a href="#events">Event wiring and full source</a></li></ol></nav>
+<nav class="toc" aria-label="Sections"><strong>Sections</strong><ol><li><a href="#shell">Document shell and controls</a></li><li><a href="#css">App and schedule CSS</a></li><li><a href="#theme">App theme toggle</a></li><li><a href="#helpers">Constants and helpers</a></li><li><a href="#html-parser">HTML table parser</a></li><li><a href="#text-parser">Pasted-text parser</a></li><li><a href="#editor">Editable rows</a></li><li><a href="#render">Sorting and schedule markup</a></li><li><a href="#exports">Fixed-canvas JPEG export</a></li><li><a href="#events">Event wiring and full source</a></li></ol></nav>
 
 <section class="section" id="shell"><header><span class="num">01</span><h2>Document shell and controls</h2></header><p>The root document declares Persian as its language and uses right-to-left layout. The single page is arranged as three panels: input, review/edit, and preview/download. The latter panels begin hidden so the user sees only the current step. The fixed moon button toggles the app chrome; the top-right <code>&lt;/&gt;</code> link opens this guide without taking space away from the mobile content.</p><p>The schedule selector keeps stable internal IDs (<code>night</code>, <code>night-light</code>, <code>light-cards</code>, <code>purple-cards</code>). English names are paired with Persian labels for clarity; changing visible names does not alter those IDs or rendering behavior.</p><div class="snippet"><div class="snippet-label">Representative document structure</div><pre><code>&lt;html lang="fa" dir="rtl"&gt;
   ...
@@ -86,7 +86,7 @@ showEditPanel();</code></pre></div></section>
   }
 });</code></pre></div><p class="note">The app escapes values rendered into HTML. Event wiring and the exact generated editor markup are shown in the complete source.</p></section>
 
-<section class="section" id="render"><header><span class="num">08</span><h2>Sorting and schedule markup</h2></header><p><code>sortedRows()</code> creates a sorted view by weekday order and start time; the original editable array remains intact. <code>examDisplayHtml()</code> formats exam information as separately labeled date and time values, with a visible separator and spacing so they do not run together. Laboratory exams use the required Persian label <em>امتحان آزمایشگاهی</em>.</p><p><code>rowHtml()</code> renders one class record with its day, course, time, location, instructor, and optional exam details. It escapes user values and applies the day color independently of the theme accent. <code>buildScheduleFragment()</code> wraps all rows in a title header and a <code>.sched-page</code> carrying the selected style ID. Preview rendering and standalone HTML export share this fragment builder, which keeps their content aligned.</p><div class="snippet"><div class="snippet-label">One renderer, two destinations</div><pre><code>function buildScheduleFragment(){
+<section class="section" id="render"><header><span class="num">08</span><h2>Sorting and schedule markup</h2></header><p><code>sortedRows()</code> creates a sorted view by weekday order and start time; the original editable array remains intact. <code>examDisplayHtml()</code> formats exam information as separately labeled date and time values, with a visible separator and spacing so they do not run together. Laboratory exams use the required Persian label <em>امتحان آزمایشگاهی</em>.</p><p><code>rowHtml()</code> renders one class record with its day, course, time, location, instructor, and optional exam details. It escapes user values and applies the day color independently of the theme accent. <code>buildScheduleFragment()</code> wraps all rows in a title header and a <code>.sched-page</code> carrying the selected style ID. The live preview and JPEG export both use this fragment builder, so the schedule data and theme stay aligned.</p><div class="snippet"><div class="snippet-label">One renderer, two destinations</div><pre><code>function buildScheduleFragment(){
   var rows = sortedRows();
   var style = scheduleStyleSelect.value;
   return '&lt;section class="sched-page" data-style="' + style + '"&gt;'
@@ -94,9 +94,9 @@ showEditPanel();</code></pre></div></section>
     + rows.map(rowHtml).join("")
     + '&lt;/section&gt;';
 }
-// Preview inserts this fragment; HTML export wraps the same fragment.</code></pre></div></section>
+// Preview displays this fragment; JPEG export renders it on a fixed-size canvas.</code></pre></div></section>
 
-<section class="section" id="exports"><header><span class="num">09</span><h2>Standalone HTML and JPEG output</h2></header><div class="flow"><div><strong>HTML</strong><br><code>standaloneHtml()</code> wraps the shared schedule fragment in a complete document and includes its schedule styles.</div><div><strong>JPEG</strong><br><code>html2canvas</code> captures the rendered schedule element and converts the canvas to a downloadable JPEG.</div><div><strong>Image settings</strong><br>The capture uses an opaque style-matched background, 3× scale, and 98% JPEG quality.</div></div><p>The JPEG button is the primary action and appears above HTML download. <code>imageBackgroundForStyle()</code> selects a compatible canvas background for each theme. The export handler checks that <code>html2canvas</code> is available, shows status/errors, and triggers a <code>.jpeg</code> download. HTML export is separate and does not require canvas support. Both operations remain client-side. In standalone HTML, the schedule is rendered on a fixed 1263px canvas that matches the 3× JPEG dimensions. A resize handler scales the complete frame to the available phone width and reserves the scaled height, so row geometry and typography stay proportional.</p></section>
+<section class="section" id="exports"><header><span class="num">09</span><h2>Fixed-canvas JPEG export</h2></header><div class="flow"><div><strong>Fixed layout</strong><br>A temporary offscreen schedule uses a 421 CSS-pixel canvas, independent of phone preview width and device zoom.</div><div><strong>Image size</strong><br><code>html2canvas</code> captures that canvas at 3× scale for a 1263px-wide JPEG.</div><div><strong>Opaque output</strong><br>The export applies a theme-matched background and encodes JPEG at 98% quality.</div></div><p><code>imageBackgroundForStyle()</code> selects the canvas background. The export builds the same schedule fragment as the preview inside a temporary fixed-width stage, applies desktop-sized row rules even when the phone viewport triggers the narrow-screen CSS, waits for web fonts, and removes the stage after capture. The image button is the only schedule download. HTML files remain supported as timetable inputs.</p></section>
 
 <section class="section" id="events"><header><span class="num">10</span><h2>Event wiring and the full source</h2></header><p>The final script section connects the visible controls: file picker, pasted text, automatic extraction, manual editor, add/delete row, generate preview, theme selector, and downloads. Choosing a file clears pasted text, and typing clears the selected file so stale input cannot be parsed accidentally. The schedule-style listener refreshes the preview immediately when it is visible.</p><p>The execution path is: <span class="tag">read input</span> → <span class="tag">parse records</span> → <span class="tag">review/edit</span> → <span class="tag">build preview</span> → <span class="tag">export</span>. No timetable content is sent to a server.</p><p>The complete listing below is an HTML-escaped, non-executing copy of the deployed <code>index.html</code>, including all markup, CSS, parsing logic, editor behavior, and export functions. The shorter blocks are explanatory examples that map the main ideas; consult this listing for the exact implementation.</p></section>
 
@@ -241,7 +241,7 @@ showEditPanel();</code></pre></div></section>
 
   #previewWrap{ max-width:420px; margin:0 auto; }
   .style-field{display:flex;flex-direction:column;gap:5px;margin:0 0 14px}.style-field label{font-size:.75rem;color:var(--muted)}
-  .download-actions{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .download-actions{margin-top:12px}
   .download-actions button{width:100%}
   .empty-note{ text-align:center; color:var(--muted); font-size:0.85rem; padding:20px 10px; }
 
@@ -326,7 +326,6 @@ showEditPanel();</code></pre></div></section>
       &lt;div id=&quot;previewWrap&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;download-actions&quot; aria-label=&quot;دریافت برنامه&quot;&gt;
         &lt;button class=&quot;btn-primary&quot; id=&quot;downloadImgBtn&quot;&gt;ذخیره به‌صورت JPEG&lt;/button&gt;
-        &lt;button class=&quot;btn-secondary&quot; id=&quot;downloadBtn&quot;&gt;دانلود فایل HTML&lt;/button&gt;
       &lt;/div&gt;
       &lt;div class=&quot;status&quot; id=&quot;downloadStatus&quot;&gt;&lt;/div&gt;
     &lt;/div&gt;
@@ -744,7 +743,7 @@ showEditPanel();</code></pre></div></section>
     return fields.length ? &#39;&lt;div class=&quot;sched-exam&quot;&gt;&#39;+fields.join(&quot;&quot;)+&#39;&lt;/div&gt;&#39; : &quot;&quot;;
   }
 
-  // Render each class once; the live preview and downloaded HTML share this markup.
+  // Render each class once; the live preview and fixed-width JPEG renderer share this markup.
   function rowHtml(row){
     var day = normalizeDay(row.day);
     var color = DAY_COLORS[day] || &quot;#334155&quot;;
@@ -773,37 +772,6 @@ showEditPanel();</code></pre></div></section>
       &#39;&lt;/div&gt;&#39;
     );
   }
-  // Build a standalone schedule file with the selected theme and shared row markup.
-  function standaloneHtml(){
-    var visualCss = document.getElementById(&quot;scheduleVisualStyles&quot;).textContent;
-    return [
-      &#39;&lt;!DOCTYPE html&gt;&#39;,
-      &#39;&lt;html lang=&quot;fa&quot; dir=&quot;rtl&quot;&gt;&#39;,
-      &#39;&lt;head&gt;&#39;,
-      &#39;&lt;meta charset=&quot;UTF-8&quot;&gt;&#39;,
-      &#39;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;&#39;,
-      &#39;&lt;title&gt;&#39;+escapeHtml(state.scheduleTitle)+&#39;&lt;/title&gt;&#39;,
-      &#39;&lt;style&gt;&#39;,
-      &quot;@import url(&#39;https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&amp;display=swap&#39;);&quot;,
-      &#39;body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6;overflow-x:hidden}&#39;,
-      visualCss,
-      /* Match the JPEG&#39;s 3&#215; (1263px) canvas, then fit the full frame on narrow screens. */
-      &#39;.sched-page{width:421px;max-width:none;box-sizing:border-box;padding:10px;margin:0;transform:scale(3);transform-origin:top left}&#39;,
-      &#39;.sched-page .sched-row{grid-template-columns:72px minmax(0,1fr)}&#39;,
-      &#39;.sched-page .sched-info{padding:10px 12px}&#39;,
-      &#39;.sched-page .sched-meta{font-size:.69rem;gap:5px 10px}&#39;,
-      &#39;.sched-page .sched-course{font-size:.88rem}&#39;,
-      &#39;#scheduleViewport{display:flex;justify-content:center;width:100%;overflow:visible}&#39;,
-      &#39;#scheduleScale{width:1263px;flex:0 0 1263px;transform-origin:top center}&#39;,
-      &#39;&lt;/style&gt;&#39;,
-      &#39;&lt;/head&gt;&#39;,
-      &#39;&lt;body&gt;&#39;,
-      &#39;&lt;div id=&quot;scheduleViewport&quot;&gt;&lt;div id=&quot;scheduleScale&quot;&gt;&#39;+buildScheduleFragment()+&#39;&lt;/div&gt;&lt;/div&gt;&#39;,
-      &#39;&lt;script&gt;(function(){var viewport=document.getElementById(&quot;scheduleViewport&quot;);var scaleFrame=document.getElementById(&quot;scheduleScale&quot;);var schedule=scaleFrame.querySelector(&quot;.sched-page&quot;);function fitSchedule(){var scale=Math.min(1,viewport.clientWidth/1263);scaleFrame.style.transform=&quot;scale(&quot;+scale+&quot;)&quot;;viewport.style.height=(schedule.offsetHeight*3*scale)+&quot;px&quot;;}window.addEventListener(&quot;resize&quot;,fitSchedule);window.addEventListener(&quot;orientationchange&quot;,fitSchedule);if(document.fonts&amp;&amp;document.fonts.ready){document.fonts.ready.then(fitSchedule);}fitSchedule();})();&lt;\/script&gt;&#39;,
-      &#39;&lt;/body&gt;&#39;,
-      &#39;&lt;/html&gt;&#39;
-    ].join(&quot;\n&quot;);
-  }
   function showPreview(){
     document.getElementById(&quot;previewPanel&quot;).hidden = false;
     document.getElementById(&quot;previewWrap&quot;).innerHTML = buildScheduleFragment();
@@ -818,24 +786,6 @@ showEditPanel();</code></pre></div></section>
   });
   document.getElementById(&quot;buildBtn&quot;).addEventListener(&quot;click&quot;, function(){
     showPreview();
-  });
-
-  document.getElementById(&quot;downloadBtn&quot;).addEventListener(&quot;click&quot;, function(){
-    var statusEl = document.getElementById(&quot;downloadStatus&quot;);
-    try {
-      var blob = new Blob([standaloneHtml()], { type: &quot;text/html&quot; });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement(&quot;a&quot;);
-      a.href = url;
-      a.download = &quot;schedule.html&quot;;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setStatus(statusEl, &quot;ذخیره شد.&quot;, &quot;ok&quot;);
-    } catch(e){
-      setStatus(statusEl, &quot;خطا در ذخیره.&quot;, &quot;err&quot;);
-    }
   });
 
   // Export an opaque JPEG with a background matched to the selected schedule theme.
@@ -855,11 +805,30 @@ showEditPanel();</code></pre></div></section>
       return;
     }
     setStatus(statusEl, &quot;در حال آماده‌سازی تصویر...&quot;, &quot;loading&quot;);
+    var exportStage = null;
     try {
-      var target = document.querySelector(&quot;#previewWrap .sched-page&quot;);
+      if (document.fonts &amp;&amp; document.fonts.ready) await document.fonts.ready;
+      exportStage = document.createElement(&quot;div&quot;);
+      exportStage.id = &quot;jpegExportStage&quot;;
+      exportStage.style.cssText = &quot;position:fixed;left:-10000px;top:0;width:421px;z-index:-1;pointer-events:none;&quot;;
+      var exportStyle = document.createElement(&quot;style&quot;);
+      exportStyle.textContent =
+        &quot;#jpegExportStage .sched-page{width:421px!important;max-width:none!important;box-sizing:border-box!important;margin:0!important;padding:10px!important;transform:none!important}&quot;+
+        &quot;#jpegExportStage .sched-row{grid-template-columns:72px minmax(0,1fr)!important}&quot;+
+        &quot;#jpegExportStage .sched-info{padding:10px 12px!important}&quot;+
+        &quot;#jpegExportStage .sched-meta{font-size:.69rem!important;gap:5px 10px!important}&quot;+
+        &quot;#jpegExportStage .sched-course{font-size:.88rem!important}&quot;;
+      exportStage.appendChild(exportStyle);
+      var exportMarkup = document.createElement(&quot;div&quot;);
+      exportMarkup.innerHTML = buildScheduleFragment();
+      exportStage.appendChild(exportMarkup);
+      document.body.appendChild(exportStage);
+      var target = exportStage.querySelector(&quot;.sched-page&quot;);
       var canvas = await html2canvas(target, {
         backgroundColor: imageBackgroundForStyle(selectedScheduleStyle),
         scale: 3,
+        width: 421,
+        windowWidth: 421,
         useCORS: true
       });
       await new Promise(function(resolve, reject){
@@ -879,6 +848,8 @@ showEditPanel();</code></pre></div></section>
       setStatus(statusEl, &quot;تصویر JPEG ذخیره شد.&quot;, &quot;ok&quot;);
     } catch(e){
       setStatus(statusEl, &quot;خطا در ساخت تصویر: &quot; + (e &amp;&amp; e.message ? e.message : &quot;نامشخص&quot;), &quot;err&quot;);
+    } finally {
+      if (exportStage &amp;&amp; exportStage.parentNode) exportStage.parentNode.removeChild(exportStage);
     }
   });
 
@@ -942,3 +913,4 @@ showEditPanel();</code></pre></div></section>
 </code></pre></div></details>
 <p class="footer">For installation, usage, parser notes, deployment, and maintenance instructions, see the repository <a href="https://github.com/samansbn/persian-schedule-app#readme">README</a>. Return to the <a href="index.html">schedule app</a>.</p>
 </main></body></html>
+
