@@ -6,24 +6,930 @@
 <meta name="color-scheme" content="light dark">
 <title>Code walkthrough · Persian Schedule Builder</title>
 <style>
-:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#e8edf7;background:#0e1420;font-synthesis:none;--panel:#171f2e;--line:#2b374a;--muted:#9ba9bd;--accent:#b19cff;--code:#111a28}*{box-sizing:border-box}body{margin:0;line-height:1.65}a{color:#c1adff}.page{width:min(900px,100% - 32px);margin:0 auto;padding:36px 0 72px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.top a{font-size:.9rem}.eyebrow{text-transform:uppercase;letter-spacing:.14em;color:#98a8bf;font-size:.72rem}h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.15;margin:12px 0}h2{font-size:1.35rem;margin:0 0 10px}h3{font-size:1rem;margin:18px 0 6px;color:#e8ddff}.lead{font-size:1.05rem;color:#b9c5d8;max-width:68ch}.callout{border:1px solid #4d4277;background:#201c35;padding:16px 18px;border-radius:14px;margin:24px 0}.toc,.section{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:20px 22px;margin:16px 0}.toc ol{margin:8px 0 0;padding-inline-start:22px;columns:2}.toc li{padding:2px 0}.section header{display:flex;align-items:baseline;gap:12px}.num{color:var(--accent);font-weight:800;font-size:.82rem;letter-spacing:.08em}.section p,.section li{color:#c2ccda}.section ul{padding-inline-start:22px}.section code,code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88em;color:#ddcbff;background:#28243a;padding:2px 5px;border-radius:5px}.path{color:#a9bad1}.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.flow div{padding:12px;border-radius:10px;background:var(--code);border:1px solid var(--line);font-size:.85rem;color:#cbd5e1}.note{color:var(--muted)!important;font-size:.9rem}.footer{border-top:1px solid var(--line);margin-top:28px;padding-top:16px;color:var(--muted);font-size:.85rem}
-@media(max-width:600px){.page{width:min(100% - 22px,900px);padding-top:20px}.top{align-items:flex-start;flex-direction:column}.toc ol{columns:1}.flow{grid-template-columns:1fr}.toc,.section{padding:16px}}
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#e8edf7;background:#0d1320;font-synthesis:none;--panel:#171f2e;--line:#2b374a;--muted:#9ba9bd;--accent:#b8a5ff;--code:#0d1726}*{box-sizing:border-box}body{margin:0;line-height:1.7}.page{width:min(960px,100% - 30px);margin:0 auto;padding:28px 0 70px}a{color:#cbbdff}.top{display:flex;justify-content:space-between;align-items:center;gap:14px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;color:#98a8bf;font-size:.72rem}h1{font-size:clamp(2rem,6vw,3.5rem);line-height:1.12;margin:18px 0 10px}h2{font-size:1.3rem;margin:0 0 8px}h3{font-size:1rem;margin:18px 0 6px;color:#e8ddff}.lead{font-size:1.05rem;color:#b9c5d8;max-width:72ch}.callout,.toc,.section,.full-source{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:20px 22px;margin:16px 0}.callout{border-color:#4d4277;background:#201c35}.toc ol{margin:8px 0 0;padding-inline-start:22px;columns:2}.toc li{padding:2px 0}.section header{display:flex;align-items:baseline;gap:12px}.num{color:var(--accent);font-weight:800;font-size:.82rem;letter-spacing:.08em}.section p,.section li{color:#c2ccda}.section ul{padding-inline-start:22px}.section code,code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88em;color:#ddcbff;background:#28243a;padding:2px 5px;border-radius:5px}.snippet{margin:12px 0 16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code)}.snippet-label{padding:7px 11px;color:#a9bad1;font-size:.78rem;border-bottom:1px solid var(--line)}pre{margin:0;padding:14px;overflow:auto;direction:ltr;text-align:left;tab-size:2;white-space:pre;max-height:520px}pre code{display:block;padding:0;background:transparent;color:#d7e3f4;font-size:.8rem;line-height:1.55}.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.flow div{padding:12px;border-radius:10px;background:var(--code);border:1px solid var(--line);font-size:.85rem;color:#cbd5e1}.note{color:var(--muted)!important;font-size:.9rem}.footer{border-top:1px solid var(--line);margin-top:28px;padding-top:16px;color:var(--muted);font-size:.85rem}.full-source summary{cursor:pointer;color:#e8ddff;font-weight:700}.full-source p{color:#b9c5d8}.full-source pre{max-height:75vh}.tag{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:#b9c5d8;font-size:.74rem}
+@media(max-width:620px){.page{width:calc(100% - 22px);padding-top:18px}.toc ol{columns:1}.flow{grid-template-columns:1fr}.toc,.section,.callout,.full-source{padding:15px}.top{align-items:flex-start}}
 </style></head>
 <body><main class="page">
-<div class="top"><span class="eyebrow">Developer notes · v1</span><a href="index.html">← Back to the schedule app</a></div>
+<div class="top"><span class="eyebrow">Developer guide · Release source</span><a href="index.html">← Back to the schedule app</a></div>
 <h1>How the app works</h1>
-<p class="lead">A guided tour of <code>index.html</code>, from the page shell and Persian timetable parsers to schedule rendering and JPEG/HTML downloads.</p>
-<div class="callout"><strong>Reading map.</strong> The app is deliberately a single HTML file. Its sections are separated with comments, and its output renderer is shared by the live preview and standalone HTML export. This page explains each section in source order.</div>
-<nav class="toc" aria-label="Sections"><strong>Sections</strong><ol><li><a href="#shell">Page shell and controls</a></li><li><a href="#styles">Design system and themes</a></li><li><a href="#theme-toggle">App appearance toggle</a></li><li><a href="#helpers">Constants and helpers</a></li><li><a href="#html-parser">HTML table parser</a></li><li><a href="#text-parser">Pasted-text parser</a></li><li><a href="#editor">Review and edit state</a></li><li><a href="#schedule">Sorting and schedule output</a></li><li><a href="#exports">HTML and JPEG exports</a></li><li><a href="#wiring">Input event wiring</a></li></ol></nav>
-<section class="section" id="shell"><header><span class="num">01</span><h2>Page shell and controls</h2></header><p>The document starts with Persian language metadata and <code>dir="rtl"</code>. The body contains three step panels: input, class review, and preview/export. The latter two begin hidden and are revealed as the user advances.</p><ul><li><code>fileInput</code> accepts local HTML files; the visible file button opens it.</li><li><code>pasteText</code> accepts copied HTML or plain text.</li><li>The editor panel exposes row fields for course, weekday, class start/end, location, professor, exam date/time, and lab-exam status.</li><li>The preview panel contains the four-style selector and two output actions.</li></ul><p class="note">The small code-walkthrough link under the app title points to this page, so the documentation is available from the deployed app.</p></section>
-<section class="section" id="styles"><header><span class="num">02</span><h2>Design system and schedule themes</h2></header><p>The first style block defines app-level CSS tokens for dark mode and overrides them for light mode using <code>:root[data-theme="light"]</code>. These variables style the input/editor panels and their controls.</p><p>A separate <code>#scheduleVisualStyles</code> block styles generated output independently from the app chrome. Each schedule wrapper carries <code>data-style</code>, and CSS selects one of four palettes/layouts: <code>night</code>, <code>night-light</code>, <code>light-cards</code>, and <code>purple-cards</code>. Weekday colors come from a fixed day-color map, so they remain separate from each theme accent.</p><p class="note">If adding a theme, update the preview selector, its CSS, and the image background mapping together.</p></section>
-<section class="section" id="theme-toggle"><header><span class="num">03</span><h2>App appearance toggle</h2></header><p>The floating button switches the app shell between light and dark. The chosen value is stored under <code>scheduleAppTheme</code> in <code>localStorage</code>. This setting is independent from the schedule-style selector, which controls the generated schedule.</p></section>
-<section class="section" id="helpers"><header><span class="num">04</span><h2>Constants and helpers</h2></header><p><code>DAY_ORDER</code> controls weekday ordering, while <code>DAY_COLORS</code> maps normalized weekdays to their rail/card colors. <code>normalizeDay()</code> handles common Persian spelling/spacing variants; digit helpers convert between Persian and English digits for parsing and display. <code>timeToMinutes()</code> supports chronological sorting, and <code>escapeHtml()</code> protects user-provided values before markup insertion.</p><p>Shared state is a small object: <code>state.rows</code> contains class records, and <code>state.scheduleTitle</code> supplies the generated heading.</p></section>
-<section class="section" id="html-parser"><header><span class="num">05</span><h2>HTML table parser</h2></header><p><code>parseHtmlTableToRows()</code> parses the input with <code>DOMParser</code> and chooses a timetable table. <code>HEADER_MAP</code> maps recognized Persian column names to internal fields. <code>buildColumnIndex()</code> matches exact header labels first, then partial matches, so column order can vary and unrelated columns can be ignored.</p><p>Each data row becomes a normalized record with day, course, class times, location, professor, exam date/time, and lab-exam flag. Dates and times are extracted independently from their source cells.</p></section>
-<section class="section" id="text-parser"><header><span class="num">06</span><h2>Pasted-text parser</h2></header><p>When input is not HTML, <code>linesFromRawText()</code> splits pasted lines/tabs and drops known header or administrative noise. <code>parseLinesToRows()</code> anchors on a recognized weekday, interprets nearby class/location/course/instructor lines, then scans following date/time values.</p><p><code>parseWithLogic()</code> selects the HTML or plain-text path, stores extracted rows, reports a status, and opens the review panel. The heuristics are intentionally followed by an editing step because copied text may have ambiguous layout.</p></section>
-<section class="section" id="editor"><header><span class="num">07</span><h2>Review and edit state</h2></header><p><code>blankRow()</code> defines the empty record. <code>renderRows()</code> builds editable field controls from <code>state.rows</code>. Delegated input and click listeners update the matching record, change lab-exam state, delete a row, or append a new blank row.</p><p>The build action sorts a copy of the records; it does not rewrite their order in the editor. This keeps the user’s editing state independent from the chronological preview.</p></section>
-<section class="section" id="schedule"><header><span class="num">08</span><h2>Sorting and schedule output</h2></header><p><code>sortedRows()</code> orders records by weekday and then start time. <code>examDisplayHtml()</code> displays exam date and time as separate labeled values, and uses the Persian <em>امتحان آزمایشگاهی</em> label for lab exams. <code>rowHtml()</code> renders each class once; the preview and downloadable HTML use this shared markup.</p><p><code>buildScheduleFragment()</code> wraps those rows in the selected <code>data-style</code> and schedule title. When the style dropdown changes, the fragment is rebuilt immediately if the preview is open.</p></section>
-<section class="section" id="exports"><header><span class="num">09</span><h2>HTML and JPEG exports</h2></header><div class="flow"><div><strong>HTML</strong><br>Wrap the same schedule fragment in a standalone document and include schedule CSS.</div><div><strong>JPEG</strong><br>Capture only the styled schedule wrapper with <code>html2canvas</code>.</div><div><strong>Opaque output</strong><br>Provide a theme-matched background, render at 3×, and encode as JPEG at 98% quality.</div></div><p>The image button is the primary action and appears above the HTML download. The JPEG export uses a <code>.jpeg</code> filename and does not request transparency. `html2canvas` is loaded from cdnjs; if it fails to load, the app reports that image export is unavailable while the rest of the app remains usable.</p></section>
-<section class="section" id="wiring"><header><span class="num">10</span><h2>Input event wiring</h2></header><p>The final section connects file selection, pasted-text input, manual mode, automatic extraction, style changes, schedule building, and downloads. Selecting a file clears pasted text; entering text clears the pending file. These rules prevent the app from accidentally parsing stale input.</p><p>All parsing and schedule generation run in the browser. There is no application server or API endpoint.</p></section>
-<p class="footer">For setup and usage steps, see the repository <a href="https://github.com/samansbn/persian-schedule-app#readme">README</a>. Source file: <code>index.html</code>.</p>
+<p class="lead">A source-ordered walkthrough of the complete single-file app: layout, theme styles, parsing, editing, rendering, and exports. Focused examples below explain the key patterns; the exact complete source is available at the end.</p>
+<div class="callout"><strong>How to use this page.</strong> Read the architecture notes first, then follow the data from input to preview/export. Code blocks are formatted for horizontal scrolling on a phone. Open “Complete source” for every line of the deployed app. This documentation page does not load or execute that source.</div>
+<nav class="toc" aria-label="Sections"><strong>Sections</strong><ol><li><a href="#shell">Document shell and controls</a></li><li><a href="#css">App and schedule CSS</a></li><li><a href="#theme">App theme toggle</a></li><li><a href="#helpers">Constants and helpers</a></li><li><a href="#html-parser">HTML table parser</a></li><li><a href="#text-parser">Pasted-text parser</a></li><li><a href="#editor">Editable rows</a></li><li><a href="#render">Sorting and schedule markup</a></li><li><a href="#exports">HTML and JPEG export</a></li><li><a href="#events">Event wiring and full source</a></li></ol></nav>
+
+<section class="section" id="shell"><header><span class="num">01</span><h2>Document shell and controls</h2></header><p>The root document declares Persian as its language and uses right-to-left layout. The single page is arranged as three panels: input, review/edit, and preview/download. The latter panels begin hidden so the user sees only the current step. The fixed moon button toggles the app chrome; the top-right <code>&lt;/&gt;</code> link opens this guide without taking space away from the mobile content.</p><p>The schedule selector keeps stable internal IDs (<code>night</code>, <code>night-light</code>, <code>light-cards</code>, <code>purple-cards</code>). English names are paired with Persian labels for clarity; changing visible names does not alter those IDs or rendering behavior.</p><div class="snippet"><div class="snippet-label">Representative document structure</div><pre><code>&lt;html lang="fa" dir="rtl"&gt;
+  ...
+  &lt;button id="themeToggle"&gt;🌙&lt;/button&gt;
+  &lt;a class="code-guide-button" href="code-guide.html"&gt;&amp;lt;/&amp;gt;&lt;/a&gt;
+  &lt;div id="inputPanel"&gt;...&lt;/div&gt;
+  &lt;div id="editPanel" hidden&gt;...&lt;/div&gt;
+  &lt;div id="previewPanel" hidden&gt;...&lt;/div&gt;
+&lt;/html&gt;</code></pre></div><ul><li><code>fileInput</code> reads a local HTML timetable.</li><li><code>pasteText</code> accepts table markup or copied text.</li><li>The editor provides course, weekday, class start/end, location, instructor, exam date/time, and laboratory-exam fields.</li><li>The preview has a four-choice style selector and JPEG/HTML outputs.</li></ul></section>
+
+<section class="section" id="css"><header><span class="num">02</span><h2>App and schedule CSS</h2></header><p>The first style block defines design tokens for the app itself: background, panel, border, text, accent, and input colors. The <code>:root[data-theme="light"]</code> rule replaces those values when the appearance toggle is light. Most controls refer to the variables, so the app shell changes together.</p><p>A second block, <code>#scheduleVisualStyles</code>, defines the generated schedule. Its <code>.sched-page[data-style]</code> selectors own the four output appearances. Each uses CSS variables for surface, ink, muted text, and accents, while day colors come from <code>DAY_COLORS</code> and remain independent of the selected theme’s primary color. The card themes also change row structure, rather than only swapping colors.</p><div class="snippet"><div class="snippet-label">Theme token pattern</div><pre><code>:root {
+  --bg1: #0f0c29;
+  --card: #1e1b4b;
+  --text: #e2e8f0;
+  --accent: #a5b4fc;
+}
+:root[data-theme="light"] {
+  --bg1: #f5f3ff;
+  --card: #ffffff;
+  --text: #1e1b2e;
+  --accent: #7c3aed;
+}
+.sched-page[data-style="light-cards"] .sched-row {
+  display: flex;
+  flex-direction: column;
+}</code></pre></div><p class="note">When adding a schedule theme, update the selector, schedule CSS, and <code>imageBackgroundForStyle()</code> together. Keep the day-color map separate from theme accents.</p></section>
+
+<section class="section" id="theme"><header><span class="num">03</span><h2>App theme toggle</h2></header><p><code>applyTheme(mode)</code> sets or removes the root <code>data-theme</code> attribute and changes the button glyph. At startup the app safely reads <code>scheduleAppTheme</code> from local storage; read/write errors are caught so restricted browser storage does not prevent the app from starting. The click listener toggles light/dark and persists the choice. This preference affects the editor interface only; schedule appearance is selected separately.</p><div class="snippet"><div class="snippet-label">Startup and persistence flow</div><pre><code>var savedTheme = null;
+try { savedTheme = localStorage.getItem("scheduleAppTheme"); } catch(e){}
+applyTheme(savedTheme === "light" ? "light" : "dark");
+
+themeBtn.addEventListener("click", function(){
+  var next = document.documentElement.getAttribute("data-theme") === "light"
+    ? "dark" : "light";
+  applyTheme(next);
+  try { localStorage.setItem("scheduleAppTheme", next); } catch(e){}
+});</code></pre></div></section>
+
+<section class="section" id="helpers"><header><span class="num">04</span><h2>Constants and shared helpers</h2></header><p><code>DAY_ORDER</code> defines the canonical Persian weekday sequence; <code>DAY_COLORS</code> assigns a distinct color to each day. <code>DAY_COMPACT</code>, <code>isDayLine()</code>, and <code>normalizeDay()</code> accept spacing and spelling variants so the parser can recognize copied text consistently. Digit conversion helpers normalize Persian/Arabic numerals for comparisons, while output helpers convert digits back for display.</p><p><code>timeToMinutes()</code> turns a clock string into a sortable numeric value. <code>escapeHtml()</code> encodes special characters before user-provided course names and other fields are inserted into markup. The shared state object stores the editable row records and schedule title; parsing, editor actions, and rendering all operate on that state.</p><div class="snippet"><div class="snippet-label">Weekday ordering and color mapping</div><pre><code>var DAY_ORDER = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه",
+                 "چهارشنبه", "پنجشنبه", "جمعه"];
+var DAY_COLORS = {
+  "شنبه": "#2463a6",
+  "یکشنبه": "#087f8c",
+  "دوشنبه": "#28714f",
+  // Remaining weekday colors are defined in index.html.
+};</code></pre></div></section>
+
+<section class="section" id="html-parser"><header><span class="num">05</span><h2>HTML timetable parser</h2></header><p>The HTML path uses the browser’s <code>DOMParser</code>, not a regular expression, to read markup as a document. <code>findScheduleTable()</code> identifies a likely timetable table. <code>HEADER_MAP</code> associates common Persian heading labels with internal record properties such as course, professor, day, time, exam date, and location.</p><p><code>buildColumnIndex()</code> compares header cells with those aliases, allowing column order to change. <code>getCellText()</code> preserves line breaks from <code>&lt;br&gt;</code> elements and cleans the cell text. <code>parseHtmlTableToRows()</code> then maps each data row into the app’s record shape, normalizes day/digits, and extracts exam date and exam time separately. It skips unrelated columns and invalid/empty rows.</p><div class="snippet"><div class="snippet-label">The parser’s transformation, simplified from its implementation</div><pre><code>HTML string
+  → DOMParser document
+  → timetable table + recognized column indexes
+  → one normalized class record per valid table row
+  → editor state</code></pre></div><p class="note">The actual mapping and parsing implementation, including every alias and edge case, is included in the complete source below.</p></section>
+
+<section class="section" id="text-parser"><header><span class="num">06</span><h2>Pasted-text parser</h2></header><p>If the input is plain text, <code>linesFromRawText()</code> splits it into useful lines/tabs and removes known header and administrative noise. The parser’s anchor expression recognizes weekdays and nearby date/time markers. <code>parseLinesToRows()</code> walks those lines, gathers course, class time, location, instructor, and exam values, and creates records. Since pasted text has no table structure, the algorithm uses neighboring lines and should be followed by a manual review.</p><p><code>parseWithLogic()</code> chooses the HTML route when the pasted value contains table markup; otherwise it uses the text route. It updates status messaging, stores the extracted rows, and reveals the editor. This keeps both input formats converging on the same record shape and editing UI.</p><div class="snippet"><div class="snippet-label">Input routing</div><pre><code>if (looksLikeHtmlTable(rawText)) {
+  rows = parseHtmlTableToRows(rawText);
+} else {
+  rows = parseLinesToRows(linesFromRawText(rawText));
+}
+state.rows = rows;
+renderRows();
+showEditPanel();</code></pre></div></section>
+
+<section class="section" id="editor"><header><span class="num">07</span><h2>Editable class rows</h2></header><p><code>blankRow()</code> supplies a record with empty fields and default values. <code>renderRows()</code> turns every record in <code>state.rows</code> into a mobile-friendly card with labeled controls. When records change, the editor is rebuilt from state so what the user sees matches the data used for output.</p><p>Listeners are attached to the rows container rather than each generated control. The delegated input listener locates the record by its stable row index and writes changed values back to that record. The delegated click listener handles delete actions. “Add class” appends a blank record, while manual mode initializes the editor without parsing. The build button sorts for the preview without reordering the editing list.</p><div class="snippet"><div class="snippet-label">Delegated editing pattern</div><pre><code>rowsContainer.addEventListener("input", function(event){
+  var field = event.target;
+  var rowIndex = Number(field.dataset.index);
+  var property = field.dataset.field;
+  if (state.rows[rowIndex] && property) {
+    state.rows[rowIndex][property] = field.value;
+  }
+});</code></pre></div><p class="note">The app escapes values rendered into HTML. Event wiring and the exact generated editor markup are shown in the complete source.</p></section>
+
+<section class="section" id="render"><header><span class="num">08</span><h2>Sorting and schedule markup</h2></header><p><code>sortedRows()</code> creates a sorted view by weekday order and start time; the original editable array remains intact. <code>examDisplayHtml()</code> formats exam information as separately labeled date and time values, with a visible separator and spacing so they do not run together. Laboratory exams use the required Persian label <em>امتحان آزمایشگاهی</em>.</p><p><code>rowHtml()</code> renders one class record with its day, course, time, location, instructor, and optional exam details. It escapes user values and applies the day color independently of the theme accent. <code>buildScheduleFragment()</code> wraps all rows in a title header and a <code>.sched-page</code> carrying the selected style ID. Preview rendering and standalone HTML export share this fragment builder, which keeps their content aligned.</p><div class="snippet"><div class="snippet-label">One renderer, two destinations</div><pre><code>function buildScheduleFragment(){
+  var rows = sortedRows();
+  var style = scheduleStyleSelect.value;
+  return '&lt;section class="sched-page" data-style="' + style + '"&gt;'
+    + headerHtml(state.scheduleTitle)
+    + rows.map(rowHtml).join("")
+    + '&lt;/section&gt;';
+}
+// Preview inserts this fragment; HTML export wraps the same fragment.</code></pre></div></section>
+
+<section class="section" id="exports"><header><span class="num">09</span><h2>Standalone HTML and JPEG output</h2></header><div class="flow"><div><strong>HTML</strong><br><code>standaloneHtml()</code> wraps the shared schedule fragment in a complete document and includes its schedule styles.</div><div><strong>JPEG</strong><br><code>html2canvas</code> captures the rendered schedule element and converts the canvas to a downloadable JPEG.</div><div><strong>Image settings</strong><br>The capture uses an opaque style-matched background, 3× scale, and 98% JPEG quality.</div></div><p>The JPEG button is the primary action and appears above HTML download. <code>imageBackgroundForStyle()</code> selects a compatible canvas background for each theme. The export handler checks that <code>html2canvas</code> is available, shows status/errors, and triggers a <code>.jpeg</code> download. HTML export is separate and does not require canvas support. Both operations remain client-side.</p></section>
+
+<section class="section" id="events"><header><span class="num">10</span><h2>Event wiring and the full source</h2></header><p>The final script section connects the visible controls: file picker, pasted text, automatic extraction, manual editor, add/delete row, generate preview, theme selector, and downloads. Choosing a file clears pasted text, and typing clears the selected file so stale input cannot be parsed accidentally. The schedule-style listener refreshes the preview immediately when it is visible.</p><p>The execution path is: <span class="tag">read input</span> → <span class="tag">parse records</span> → <span class="tag">review/edit</span> → <span class="tag">build preview</span> → <span class="tag">export</span>. No timetable content is sent to a server.</p><p>The complete listing below is an HTML-escaped, non-executing copy of the deployed <code>index.html</code>, including all markup, CSS, parsing logic, editor behavior, and export functions. The shorter blocks are explanatory examples that map the main ideas; consult this listing for the exact implementation.</p></section>
+
+<details class="full-source"><summary>Complete source · index.html</summary><p>Exact app source at the time this guide was generated. Code is escaped for safe display and is not run on this page.</p><div class="snippet"><div class="snippet-label">index.html · complete source</div><pre><code><!-- &lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;fa&quot; dir=&quot;rtl&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0&quot;&gt;
+&lt;title&gt;برنامه‌ساز کلاسی&lt;/title&gt;
+&lt;style&gt;
+  @import url(&#39;https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&amp;display=swap&#39;);
+
+  :root{
+    --bg1:#0f0c29; --bg2:#302b63; --bg3:#24243e;
+    --card:#1e1b4b; --card2:#171335; --border:#312e81;
+    --text:#e2e8f0; --muted:#94a3b8; --accent:#a5b4fc; --prof:#c4b5fd;
+    --badge:#4c1d95; --badge-text:#e9d5ff; --lab-bg:#334155; --lab-text:#cbd5e1;
+    --btn:#6d28d9; --btn-hover:#7c3aed;
+    --input-bg:#0f0c29; --input-border:#4338ca;
+  }
+  :root[data-theme=&quot;light&quot;]{
+    --bg1:#f5f3ff; --bg2:#ede9fe; --bg3:#f8fafc;
+    --card:#ffffff; --card2:#f3f0fb; --border:#ddd6fe;
+    --text:#1e1b2e; --muted:#6b7280; --accent:#7c3aed; --prof:#6d28d9;
+    --btn:#7c3aed; --btn-hover:#6d28d9;
+    --input-bg:#ffffff; --input-border:#c4b5fd;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body{ background:linear-gradient(160deg, var(--bg1), var(--bg2), var(--bg3)); }
+  body{
+    font-family:&#39;Vazirmatn&#39;, system-ui, sans-serif;
+    min-height:100vh; padding:16px; color:var(--text);
+  }
+  .shell{ max-width:640px; margin:0 auto; }
+
+  header.app-head{ text-align:center; padding:44px 4px 20px; }
+  header.app-head h1{
+    font-size:1.5rem; font-weight:700; display:flex; align-items:center;
+    justify-content:center; gap:10px;
+  }
+
+  .panel{
+    background:var(--card); border:1px solid var(--border); border-radius:18px;
+    padding:18px; margin-bottom:16px; box-shadow:0 10px 40px rgba(0,0,0,0.35);
+  }
+  .panel h2{ font-size:1rem; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .panel .step-num{
+    width:22px; height:22px; border-radius:50%; background:var(--btn); color:#fff;
+    display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0;
+  }
+
+  .dz-file{ margin-top:8px; font-size:0.8rem; color:var(--accent); text-align:center; }
+
+  .divider-or{
+    display:flex; align-items:center; gap:10px; color:var(--muted); font-size:0.78rem; margin:14px 0;
+  }
+  .divider-or::before, .divider-or::after{ content:&#39;&#39;; flex:1; height:1px; background:var(--border); }
+
+  textarea, input[type=&quot;text&quot;], input[type=&quot;password&quot;]{
+    width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);
+    border-radius:10px; padding:10px 12px; font-family:inherit; font-size:0.85rem; resize:vertical;
+  }
+  textarea{ min-height:110px; }
+  textarea:focus, input:focus, select:focus{ outline:none; border-color:var(--accent); }
+
+  button{
+    font-family:inherit; cursor:pointer; border:none; border-radius:10px;
+    font-size:0.85rem; font-weight:600; padding:11px 16px; transition:transform .1s, background .15s;
+  }
+  button:active{ transform:scale(0.98); }
+  .btn-primary{ background:var(--btn); color:#fff; width:100%; }
+  .btn-primary:hover{ background:var(--btn-hover); }
+  .btn-primary:disabled{ opacity:0.5; cursor:not-allowed; }
+  .btn-secondary{ background:var(--card2); color:var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover{ border-color:var(--accent); }
+  .btn-danger{ background:transparent; color:#f87171; border:1px solid rgba(248,113,113,0.4); padding:6px 10px; font-size:0.75rem; }
+  .btn-danger:hover{ background:rgba(248,113,113,0.1); }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .btn-row button{ flex:1; min-width:120px; }
+
+  .status{ font-size:0.82rem; margin-top:10px; display:flex; align-items:center; gap:8px; }
+  .status.err{ color:#f87171; }
+  .status.ok{ color:#34d399; }
+  .spinner{
+    width:14px; height:14px; border:2px solid var(--border); border-top-color:var(--accent);
+    border-radius:50%; animation:spin 0.8s linear infinite; flex-shrink:0;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* editable rows */
+  .rowcard{
+    background:var(--card2); border:1px solid var(--border); border-radius:12px;
+    padding:12px; margin-bottom:10px;
+  }
+  .rowcard-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .rowcard-top .idx{ font-size:0.75rem; color:var(--muted); }
+  .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .field-grid .full{ grid-column:1 / -1; }
+  .field{ display:flex; flex-direction:column; gap:4px; }
+  .field label{ font-size:0.7rem; color:var(--muted); }
+  select{
+    width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);
+    border-radius:10px; padding:9px 10px; font-family:inherit; font-size:0.82rem;
+  }
+  .checkline{ display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--muted); grid-column:1/-1; }
+  .checkline input{ width:16px; height:16px; accent-color:var(--btn); }
+
+  #addRowBtn{ width:100%; border:1px dashed var(--border); background:transparent; color:var(--accent); }
+  #addRowBtn:hover{ border-color:var(--accent); background:rgba(165,180,252,0.08); }
+
+  /* generated schedule preview */
+  .sched-header{
+    background:linear-gradient(135deg, #4c1d95, #6d28d9); border-radius:20px 20px 0 0;
+    padding:18px 20px; text-align:center; box-shadow:0 4px 20px rgba(109,40,217,0.4);
+    color:#fff;
+  }
+  .sched-header span.title{ font-size:1.35rem; font-weight:700; color:#fff; }
+  /* The generated schedule preview always keeps its own fixed dark palette,
+     independent of the app&#39;s light/dark toggle -- it must look identical
+     to the downloaded standalone file no matter which app theme is active. */
+  .sched-card{ background:#1e1b4b; border-radius:0 0 20px 20px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.5); }
+  .sched-row{ display:grid; grid-template-columns:78px 1fr; border-bottom:1px solid #312e81; }
+  .sched-row:last-child{ border-bottom:none; }
+  .sched-day{
+    display:flex; align-items:center; justify-content:center; padding:14px 6px;
+    font-weight:600; font-size:0.85rem; color:#fff; text-align:center;
+  }
+  .sched-info{ padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .sched-course{ font-weight:600; font-size:0.95rem; color:#f1f5f9; line-height:1.35; }
+  .sched-meta{ display:flex; flex-wrap:wrap; gap:8px 12px; font-size:0.78rem; color:#94a3b8; }
+  .sched-meta span{ display:inline-flex; align-items:center; gap:4px; }
+  .sched-time{ color:#a5b4fc; font-weight:500; }
+  .sched-location{ color:#94a3b8; }
+  .sched-prof{ color:#c4b5fd; }
+  .sched-exam{ margin-top:2px; }
+  .exam-badge{
+    display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:600;
+    background:#4c1d95; color:#e9d5ff;
+  }
+  .exam-badge.lab{ background:#334155; color:#cbd5e1; }
+
+  #previewWrap{ max-width:420px; margin:0 auto; }
+  .style-field{display:flex;flex-direction:column;gap:5px;margin:0 0 14px}.style-field label{font-size:.75rem;color:var(--muted)}
+  .download-actions{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .download-actions button{width:100%}
+  .empty-note{ text-align:center; color:var(--muted); font-size:0.85rem; padding:20px 10px; }
+
+  #themeToggle{
+    position:fixed; top:14px; left:14px; z-index:50;
+    width:40px; height:40px; border-radius:50%; background:var(--card);
+    border:1px solid var(--border); color:var(--text); font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center; padding:0;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+
+  .code-guide-button{
+    position:fixed; top:14px; right:14px; z-index:50;
+    width:40px; height:40px; border-radius:50%; background:var(--card);
+    border:1px solid var(--border); color:var(--accent); font-family:ui-monospace,monospace;
+    font-size:.78rem; font-weight:700; text-decoration:none;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+  .code-guide-button:hover{border-color:var(--accent); transform:translateY(-1px)}
+
+  @media (max-width:380px){
+    .field-grid{ grid-template-columns:1fr; }
+  }
+&lt;/style&gt;
+&lt;style id=&quot;scheduleVisualStyles&quot;&gt;
+.sched-page{--pbg:#0f0c29;--pbg2:#302b63;--surface:#1e1b4b;--line:#312e81;--ink:#f1f5f9;--muted:#94a3b8;--accent:#a5b4fc;--prof:#c4b5fd;--badge:#4c1d95;--badgeText:#e9d5ff;--lab:#334155;--labText:#cbd5e1;max-width:420px;min-height:180px;margin:0 auto;padding:10px;background:linear-gradient(160deg,var(--pbg),var(--pbg2));color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;border-radius:20px;overflow:hidden}
+.sched-header{background:linear-gradient(135deg,#4c1d95,#6d28d9);border-radius:14px 14px 0 0;padding:15px 16px;text-align:center;color:#fff;box-shadow:0 4px 18px #6d28d944}.sched-header .title{font-size:1.2rem;font-weight:700;color:#fff}.sched-card{background:var(--surface);border-radius:0 0 14px 14px;overflow:hidden;box-shadow:0 10px 30px #0004}.sched-row{display:grid;grid-template-columns:72px minmax(0,1fr);border-bottom:1px solid var(--line)}.sched-row:last-child{border-bottom:0}.sched-day{display:flex;align-items:center;justify-content:center;padding:12px 5px;font-weight:600;font-size:.8rem;color:#fff;text-align:center}.sched-info{min-width:0;padding:10px 12px;display:flex;flex-direction:column;gap:5px}.sched-course{font-weight:600;font-size:.88rem;color:var(--ink);line-height:1.45}.sched-meta{display:flex;flex-wrap:wrap;gap:5px 10px;font-size:.69rem;color:var(--muted)}.sched-meta span{display:inline-flex;align-items:center;gap:4px}.sched-time{color:var(--accent);font-weight:600}.sched-prof{color:var(--prof)}.sched-location{color:var(--muted)}.sched-exam{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:2px}.sched-exam .exam-label{font-size:.61rem;font-weight:500;opacity:.82}.sched-exam .exam-separator{font-weight:700;margin-inline:1px}.sched-page .sched-exam .exam-date,.sched-page .sched-exam .exam-time{display:inline-flex;align-items:baseline;gap:4px}.sched-exam .exam-value{font-size:.66rem;font-weight:700;direction:ltr;unicode-bidi:isolate}.sched-page .exam-badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.64rem;font-weight:600;background:var(--badge);color:var(--badgeText)}.sched-page .exam-badge.lab{background:var(--lab);color:var(--labText)}
+.sched-page[data-style=&quot;night-light&quot;]{--pbg:#f0f2f7;--pbg2:#e8eaf3;--surface:#fff;--line:#e7e8f0;--ink:#25243a;--muted:#74768a;--accent:#6258a8;--prof:#65579a;--badge:#eeebf8;--badgeText:#54477e;--lab:#edf0f4;--labText:#5f6874}.sched-page[data-style=&quot;night-light&quot;] .sched-header{background:linear-gradient(135deg,#494263,#776b9b);box-shadow:0 4px 16px #49426328}.sched-page[data-style=&quot;night-light&quot;] .sched-card{box-shadow:0 10px 30px #30334b20}
+.sched-page[data-style=&quot;light-cards&quot;]{--pbg:#f1eee8;--pbg2:#f1eee8;--surface:#fffdf8;--line:#e9e0d5;--ink:#302820;--muted:#897a6d;--accent:#a15d3f;--prof:#80543f;--badge:#f4e8dd;--badgeText:#925539;--lab:#ece8e2;--labText:#746f68;padding:9px;background:linear-gradient(160deg,#f7f2e9,#eee8df)}.sched-page[data-style=&quot;light-cards&quot;] .sched-header{background:linear-gradient(135deg,#704738,#b57853);box-shadow:0 4px 16px #7047382c}.sched-page[data-style=&quot;light-cards&quot;] .sched-card{background:transparent;box-shadow:none;padding-top:5px}.sched-page[data-style=&quot;light-cards&quot;] .sched-row{display:flex;flex-direction:column;margin:7px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:0 3px 10px #543c2210}.sched-page[data-style=&quot;light-cards&quot;] .sched-day{justify-content:flex-start;padding:5px 11px;text-align:right;font-size:.71rem}.sched-page[data-style=&quot;light-cards&quot;] .sched-info{padding:9px 11px}
+.sched-page[data-style=&quot;purple-cards&quot;]{--pbg:#12101b;--pbg2:#1a1528;--surface:#211c2d;--line:#393147;--ink:#f3effa;--muted:#b2a9bf;--accent:#c5a4f4;--prof:#d0b8ee;--badge:#392d4c;--badgeText:#eadcf9;--lab:#343143;--labText:#dfd9e8;padding:9px;background:linear-gradient(160deg,#12101b,#211831)}.sched-page[data-style=&quot;purple-cards&quot;] .sched-header{background:linear-gradient(135deg,#382345,#79539a);box-shadow:0 4px 18px #79539a44}.sched-page[data-style=&quot;purple-cards&quot;] .sched-card{background:transparent;box-shadow:none;padding-top:5px}.sched-page[data-style=&quot;purple-cards&quot;] .sched-row{display:flex;flex-direction:column;margin:7px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:0 3px 14px #08061155}.sched-page[data-style=&quot;purple-cards&quot;] .sched-day{justify-content:flex-start;padding:5px 11px;text-align:right;font-size:.71rem;border-bottom:1px solid #ffffff20}.sched-page[data-style=&quot;purple-cards&quot;] .sched-info{padding:9px 11px}
+@media(max-width:380px){.sched-page{padding:8px}.sched-row{grid-template-columns:64px minmax(0,1fr)}.sched-info{padding:9px}.sched-meta{font-size:.64rem;gap:4px 8px}.sched-course{font-size:.84rem}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;button id=&quot;themeToggle&quot; title=&quot;حالت روشن/تیره&quot;&gt;&#127769;&lt;/button&gt;
+  &lt;a class=&quot;code-guide-button&quot; href=&quot;code-guide.html&quot; title=&quot;Code walkthrough &#183; راهنمای کد&quot; aria-label=&quot;Code walkthrough&quot;&gt;&amp;lt;/&amp;gt;&lt;/a&gt;
+
+  &lt;div class=&quot;shell&quot;&gt;
+    &lt;header class=&quot;app-head&quot;&gt;
+      &lt;h1&gt;&lt;span&gt;&#128197;&lt;/span&gt;برنامه‌ساز کلاسی&lt;span&gt;&#128197;&lt;/span&gt;&lt;/h1&gt;
+    &lt;/header&gt;
+
+    &lt;!-- STEP 1: input --&gt;
+    &lt;div class=&quot;panel&quot; id=&quot;inputPanel&quot;&gt;
+      &lt;h2&gt;&lt;span class=&quot;step-num&quot;&gt;۱&lt;/span&gt;ورودی اطلاعات&lt;/h2&gt;
+
+      &lt;input type=&quot;file&quot; id=&quot;fileInput&quot; accept=&quot;.html,.htm,text/html&quot; style=&quot;display:none;&quot;&gt;
+      &lt;div class=&quot;btn-row&quot; style=&quot;margin-top:0;&quot;&gt;
+        &lt;button class=&quot;btn-secondary&quot; id=&quot;fileBtn&quot;&gt;انتخاب فایل HTML&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;dz-file&quot; id=&quot;fileNameDisplay&quot;&gt;&lt;/div&gt;
+
+      &lt;div class=&quot;divider-or&quot;&gt;یا&lt;/div&gt;
+
+      &lt;div class=&quot;field&quot;&gt;
+        &lt;textarea id=&quot;pasteText&quot; placeholder=&quot;کد HTML جدول یا متن آن را اینجا پیست کن...&quot;&gt;&lt;/textarea&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;btn-row&quot;&gt;
+        &lt;button class=&quot;btn-primary&quot; id=&quot;parseBtn&quot;&gt;استخراج خودکار&lt;/button&gt;
+        &lt;button class=&quot;btn-secondary&quot; id=&quot;manualBtn&quot;&gt;حالت دستی&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;status&quot; id=&quot;parseStatus&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- STEP 2: edit --&gt;
+    &lt;div class=&quot;panel&quot; id=&quot;editPanel&quot; hidden&gt;
+      &lt;h2&gt;&lt;span class=&quot;step-num&quot;&gt;۲&lt;/span&gt;بررسی و ویرایش کلاس‌ها&lt;/h2&gt;
+      &lt;div id=&quot;rowsContainer&quot;&gt;&lt;/div&gt;
+      &lt;button id=&quot;addRowBtn&quot;&gt;+ افزودن کلاس&lt;/button&gt;
+      &lt;div class=&quot;btn-row&quot;&gt;
+        &lt;button class=&quot;btn-primary&quot; id=&quot;buildBtn&quot;&gt;تولید برنامه&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- STEP 3: preview + download --&gt;
+    &lt;div class=&quot;panel&quot; id=&quot;previewPanel&quot; hidden&gt;
+      &lt;h2&gt;&lt;span class=&quot;step-num&quot;&gt;۳&lt;/span&gt;پیش‌نمایش خروجی&lt;/h2&gt;
+      &lt;div class=&quot;style-field&quot;&gt;&lt;label for=&quot;scheduleStyleSelect&quot;&gt;سبک برنامه&lt;/label&gt;&lt;select id=&quot;scheduleStyleSelect&quot;&gt;&lt;option value=&quot;night&quot;&gt;۱ &#183; Nightfall &#183; شبانه&lt;/option&gt;&lt;option value=&quot;night-light&quot;&gt;۲ &#183; Moonlit &#183; شبانه روشن&lt;/option&gt;&lt;option value=&quot;light-cards&quot;&gt;۳ &#183; Sandstone Cards &#183; کارت روشن&lt;/option&gt;&lt;option value=&quot;purple-cards&quot;&gt;۴ &#183; Violet Cards &#183; کارت بنفش&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+      &lt;div id=&quot;previewWrap&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;download-actions&quot; aria-label=&quot;دریافت برنامه&quot;&gt;
+        &lt;button class=&quot;btn-primary&quot; id=&quot;downloadImgBtn&quot;&gt;ذخیره به‌صورت JPEG&lt;/button&gt;
+        &lt;button class=&quot;btn-secondary&quot; id=&quot;downloadBtn&quot;&gt;دانلود فایل HTML&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;status&quot; id=&quot;downloadStatus&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(function(){
+  &quot;use strict&quot;;
+
+  // ---------- theme toggle ----------
+  var themeBtn = document.getElementById(&quot;themeToggle&quot;);
+  function applyTheme(mode){
+    if (mode === &quot;light&quot;){
+      document.documentElement.setAttribute(&quot;data-theme&quot;, &quot;light&quot;);
+      themeBtn.textContent = &quot;☀️&quot;;
+    } else {
+      document.documentElement.removeAttribute(&quot;data-theme&quot;);
+      themeBtn.textContent = &quot;&#127769;&quot;;
+    }
+  }
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem(&quot;scheduleAppTheme&quot;); } catch(e){}
+  applyTheme(savedTheme === &quot;light&quot; ? &quot;light&quot; : &quot;dark&quot;);
+  themeBtn.addEventListener(&quot;click&quot;, function(){
+    var next = document.documentElement.getAttribute(&quot;data-theme&quot;) === &quot;light&quot; ? &quot;dark&quot; : &quot;light&quot;;
+    applyTheme(next);
+    try { localStorage.setItem(&quot;scheduleAppTheme&quot;, next); } catch(e){}
+  });
+
+  // ---------- constants ----------
+  var DAY_ORDER = [&quot;شنبه&quot;,&quot;یکشنبه&quot;,&quot;دوشنبه&quot;,&quot;سه‌شنبه&quot;,&quot;چهارشنبه&quot;,&quot;پنجشنبه&quot;,&quot;جمعه&quot;];
+  var DAY_COLORS = {
+    &quot;شنبه&quot;:&quot;#2463a6&quot;,
+    &quot;یکشنبه&quot;:&quot;#087f8c&quot;,
+    &quot;دوشنبه&quot;:&quot;#28714f&quot;,
+    &quot;سه‌شنبه&quot;:&quot;#935a12&quot;,
+    &quot;چهارشنبه&quot;:&quot;#a94834&quot;,
+    &quot;پنجشنبه&quot;:&quot;#a13c69&quot;,
+    &quot;جمعه&quot;:&quot;#475569&quot;
+  };
+
+  var DAY_COMPACT = [&quot;شنبه&quot;,&quot;یکشنبه&quot;,&quot;دوشنبه&quot;,&quot;سهشنبه&quot;,&quot;چهارشنبه&quot;,&quot;پنجشنبه&quot;,&quot;جمعه&quot;];
+  function isDayLine(line){
+    var c = String(line||&quot;&quot;).replace(/[\u200c\s]/g,&quot;&quot;);
+    return DAY_COMPACT.indexOf(c) !== -1;
+  }
+
+  function normalizeDay(d){
+    if(!d) return &quot;شنبه&quot;;
+    var s = String(d).replace(/[\u200c\s]/g,&quot;&quot;);
+    if (s === &quot;سهشنبه&quot; || s.indexOf(&quot;سه&quot;)===0) return &quot;سه‌شنبه&quot;;
+    if (s === &quot;چهارشنبه&quot;) return &quot;چهارشنبه&quot;;
+    if (s === &quot;پنجشنبه&quot;) return &quot;پنجشنبه&quot;;
+    if (s === &quot;یکشنبه&quot;) return &quot;یکشنبه&quot;;
+    if (s === &quot;دوشنبه&quot;) return &quot;دوشنبه&quot;;
+    if (s === &quot;شنبه&quot;) return &quot;شنبه&quot;;
+    if (s === &quot;جمعه&quot;) return &quot;جمعه&quot;;
+    return &quot;شنبه&quot;;
+  }
+
+  function toPersianDigits(str){
+    if(str===null||str===undefined) return &quot;&quot;;
+    var map = {&quot;0&quot;:&quot;۰&quot;,&quot;1&quot;:&quot;۱&quot;,&quot;2&quot;:&quot;۲&quot;,&quot;3&quot;:&quot;۳&quot;,&quot;4&quot;:&quot;۴&quot;,&quot;5&quot;:&quot;۵&quot;,&quot;6&quot;:&quot;۶&quot;,&quot;7&quot;:&quot;۷&quot;,&quot;8&quot;:&quot;۸&quot;,&quot;9&quot;:&quot;۹&quot;};
+    return String(str).replace(/[0-9]/g, function(d){ return map[d]; });
+  }
+  function toEnglishDigits(str){
+    if(str===null||str===undefined) return &quot;&quot;;
+    var map = {&quot;۰&quot;:&quot;0&quot;,&quot;۱&quot;:&quot;1&quot;,&quot;۲&quot;:&quot;2&quot;,&quot;۳&quot;:&quot;3&quot;,&quot;۴&quot;:&quot;4&quot;,&quot;۵&quot;:&quot;5&quot;,&quot;۶&quot;:&quot;6&quot;,&quot;۷&quot;:&quot;7&quot;,&quot;۸&quot;:&quot;8&quot;,&quot;۹&quot;:&quot;9&quot;};
+    return String(str).replace(/[۰-۹]/g, function(d){ return map[d]; });
+  }
+  function timeToMinutes(t){
+    var s = toEnglishDigits(t||&quot;&quot;).trim();
+    var m = s.match(/(\d{1,2}):(\d{2})/);
+    if(!m) return 9999;
+    return parseInt(m[1],10)*60 + parseInt(m[2],10);
+  }
+  function escapeHtml(s){
+    return String(s===undefined||s===null? &quot;&quot;: s)
+      .replace(/&amp;/g,&quot;&amp;amp;&quot;).replace(/&lt;/g,&quot;&amp;lt;&quot;).replace(/&gt;/g,&quot;&amp;gt;&quot;).replace(/&quot;/g,&quot;&amp;quot;&quot;);
+  }
+
+  var state = { rows: [], scheduleTitle: &quot;برنامه کلاسی&quot; };
+  var selectedScheduleStyle = &quot;night&quot;;
+
+  // ---------- HTML table extraction (header-driven: order &amp; extra columns don&#39;t matter) ----------
+  var HEADER_MAP = {
+    course:    [&quot;درس&quot;],
+    professor: [&quot;استاد&quot;, &quot;اساتید&quot;],
+    day:       [&quot;روز&quot;],
+    time:      [&quot;ساعت&quot;],
+    examDate:  [&quot;تاریخ امتحان&quot;, &quot;امتحان&quot;],
+    location:  [&quot;مکان&quot;]
+  };
+  var TIME_REGEX_G = /[0-9۰-۹]{1,2}:[0-9۰-۹]{2}/g;
+
+  function getCellText(cell){
+    var html = cell.innerHTML.replace(/&lt;br\s*\/?&gt;/gi, &quot;\n&quot;);
+    var tmp = document.createElement(&quot;div&quot;);
+    tmp.innerHTML = html;
+    var text = tmp.textContent || tmp.innerText || &quot;&quot;;
+    return text.split(/\n+/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length &gt; 0; }).join(&quot;\n&quot;);
+  }
+
+  function findScheduleTable(doc){
+    var tables = Array.prototype.slice.call(doc.querySelectorAll(&quot;table&quot;));
+    for (var i = 0; i &lt; tables.length; i++){
+      var headerCells = tables[i].querySelectorAll(&quot;tr:first-child th, tr:first-child td&quot;);
+      var headerText = Array.prototype.map.call(headerCells, function(c){ return c.textContent.trim(); }).join(&quot; &quot;);
+      if (headerText.indexOf(&quot;درس&quot;) !== -1 &amp;&amp; headerText.indexOf(&quot;روز&quot;) !== -1) return tables[i];
+    }
+    return tables[0] || null;
+  }
+
+  function buildColumnIndex(headerCells){
+    var idx = {}, used = {};
+    Object.keys(HEADER_MAP).forEach(function(key){
+      for (var i = 0; i &lt; headerCells.length; i++){
+        if (used[i]) continue;
+        if (HEADER_MAP[key].indexOf(headerCells[i].trim()) !== -1){ idx[key] = i; used[i] = true; break; }
+      }
+    });
+    Object.keys(HEADER_MAP).forEach(function(key){
+      if (idx[key] !== undefined) return;
+      for (var i = 0; i &lt; headerCells.length; i++){
+        if (used[i]) continue;
+        if (HEADER_MAP[key].some(function(p){ return headerCells[i].indexOf(p) !== -1; })){ idx[key] = i; used[i] = true; break; }
+      }
+    });
+    return idx;
+  }
+
+  function parseHtmlTableToRows(htmlString){
+    var doc = new DOMParser().parseFromString(htmlString, &quot;text/html&quot;);
+    var table = findScheduleTable(doc);
+    if (!table) throw new Error(&quot;جدولی در فایل پیدا نشد&quot;);
+    var rows = Array.prototype.slice.call(table.querySelectorAll(&quot;tr&quot;));
+    if (!rows.length) throw new Error(&quot;ردیفی در جدول پیدا نشد&quot;);
+    var headerCells = Array.prototype.slice.call(rows[0].querySelectorAll(&quot;th,td&quot;)).map(function(c){ return c.textContent.trim(); });
+    var colIdx = buildColumnIndex(headerCells);
+    var out = [];
+    rows.slice(1).forEach(function(tr){
+      var cells = Array.prototype.slice.call(tr.querySelectorAll(&quot;td,th&quot;)).map(getCellText);
+      if (!cells.length) return;
+      function get(key){ return colIdx[key] !== undefined &amp;&amp; cells[colIdx[key]] !== undefined ? cells[colIdx[key]] : &quot;&quot;; }
+
+      var course = normalizeCourseName(get(&quot;course&quot;).replace(/\n/g, &quot; &quot;));
+      if (!course) return;
+      var professor = get(&quot;professor&quot;).replace(/\n/g, &quot; &quot;).replace(PERCENT_STRIP_REGEX, &quot;&quot;).trim();
+      var day = normalizeDay(get(&quot;day&quot;).replace(/\n/g, &quot; &quot;).trim());
+      var times = get(&quot;time&quot;).match(TIME_REGEX_G) || [];
+      var timeStart = times[0] ? toPersianDigits(toEnglishDigits(times[0])) : &quot;&quot;;
+      var timeEnd = times[1] ? toPersianDigits(toEnglishDigits(times[1])) : &quot;&quot;;
+      var examCell = get(&quot;examDate&quot;);
+      var dm = examCell.match(DATE_REGEX);
+      var examDate = dm ? toPersianDigits(dm[0]) : &quot;&quot;;
+      var examTimes = examCell.match(TIME_REGEX_G) || [];
+      var examTime = examTimes.length &gt;= 2
+        ? toPersianDigits(toEnglishDigits(examTimes[0])) + &quot; - &quot; + toPersianDigits(toEnglishDigits(examTimes[1]))
+        : (examTimes.length === 1 ? toPersianDigits(toEnglishDigits(examTimes[0])) : &quot;&quot;);
+      var location = get(&quot;location&quot;).replace(/\n/g, &quot; &quot;).replace(/مهندسی/g, &quot;&quot;).replace(/\s+/g, &quot; &quot;).trim();
+      var isLab = !examDate &amp;&amp; /آزمایشگاه/.test(course);
+
+      out.push({ day: day, course: course, time_start: timeStart, time_end: timeEnd, location: location, professor: professor, is_lab: isLab, exam_date: examDate, exam_time: examTime });
+    });
+    return out;
+  }
+
+  // ---------- logic-based parsing (no AI) ----------
+  // Plain-text-paste fallback (used when the input isn&#39;t HTML). Real
+  // copy-pasted table text puts each cell on its own line (and the header
+  // row is tab-separated), so this is anchored on the day name -- the one
+  // field guaranteed to appear exactly once per row -- rather than on any
+  // fixed line position. Irrelevant columns (units, attendance, session
+  // counts, group numbers, gender/status) are simply dropped as junk.
+
+  var ANCHOR_REGEX = /(شنبه|یکشنبه|دوشنبه|سه‌شنبه|سهشنبه|چهارشنبه|پنجشنبه|جمعه|[0-9۰-۹]{1,2}:[0-9۰-۹]{2}|[0-9۰-۹]{3,4}\/[0-9۰-۹]{1,2}\/[0-9۰-۹]{1,2}|مختلط|زن|مرد|کلاس|کارگاه|%)/g;
+  var DATE_REGEX = /[0-9۰-۹]{3,4}\/[0-9۰-۹]{1,2}\/[0-9۰-۹]{1,2}/;
+  var PAREN_NUM_REGEX = /[()]\s*[0-9۰-۹]+\s*[()]/;
+  var PAREN_NUM_REGEX_G = /[()]\s*[0-9۰-۹]+\s*[()]/g;
+  var PERCENT_STRIP_REGEX = /[()]?\s*[0-9۰-۹]*\s*%\s*[0-9۰-۹]*\s*[()]?/g;
+
+  var IGNORE_EXACT_LINES = [
+    &quot;لیست کلاس‌ها&quot;,&quot;لیست کلاس ها&quot;,&quot;برنامه کلاسی هفتگی&quot;,&quot;ورود به lms&quot;,&quot;ورود به exam&quot;,
+    &quot;مشاهده در lms&quot;,&quot;مشاهده در exam&quot;,
+    &quot;درس&quot;,&quot;اساتید&quot;,&quot;جنسیت&quot;,&quot;وضعیت&quot;,&quot;نمره&quot;,&quot;واحد عملی&quot;,&quot;واحد تئوری&quot;,&quot;تعداد دانشجو&quot;,
+    &quot;تعداد جلسات غیبت&quot;,&quot;گروه&quot;,&quot;مکان&quot;,&quot;روز&quot;,&quot;ساعت&quot;,&quot;تاریخ امتحان&quot;,&quot;آموزش&quot;,&quot;اطلاعات کاربری&quot;,
+    &quot;فرآیندها&quot;,&quot;مالی&quot;,&quot;آزمون پایان نیمسال&quot;,&quot;دانشجویی&quot;,&quot;فرهنگی و ورزشی&quot;,&quot;برنامه‌ها&quot;
+  ];
+
+  function isJunkLine(l){
+    var t = l.trim();
+    if (!t) return true;
+    var tl = t.toLowerCase();
+    if (/^[()]+$/.test(t)) return true;
+    if (IGNORE_EXACT_LINES.indexOf(tl) !== -1) return true;
+    if (/موسسه آموزش عالی|&#169;/.test(t)) return true;
+    if (/^(مختلط|زن|مرد)$/.test(t)) return true;
+    if (/^(ناتمام|تمام)$/.test(t)) return true;
+    if (/جلسه/.test(t)) return true;
+    if (/^[0-9۰-۹]+(\.[0-9۰-۹]+)?$/.test(t)) return true;
+    return false;
+  }
+
+  function linesFromRawText(text){
+    var rawLines = String(text).split(/\r?\n|\t/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length &gt; 0; });
+    var out = [];
+    rawLines.forEach(function(line){
+      var matches = line.match(ANCHOR_REGEX);
+      var pieces = (matches &amp;&amp; matches.length &gt; 1)
+        ? line.replace(ANCHOR_REGEX, &quot;\n$1&quot;).split(/\n+/).map(function(s){ return s.trim(); })
+        : [line];
+      pieces.forEach(function(p){ if (p &amp;&amp; !isJunkLine(p)) out.push(p); });
+    });
+    return out;
+  }
+
+  function normalizeCourseName(s){
+    return s.replace(PAREN_NUM_REGEX_G, &quot;&quot;).replace(/\s+/g, &quot; &quot;).trim();
+  }
+
+  // Sequential scan anchored on the day-name line: everything before it
+  // (back to the previous record&#39;s tail) is course + professor + location;
+  // everything after it, until a line with neither a time nor a date shows
+  // up, is this record&#39;s class time and optional exam date/time.
+  function parseLinesToRows(lines){
+    var records = [];
+    var cursor = 0;
+    while (cursor &lt; lines.length){
+      var dayIdx = -1;
+      for (var i = cursor; i &lt; lines.length; i++){ if (isDayLine(lines[i])) { dayIdx = i; break; } }
+      if (dayIdx === -1) break;
+
+      var beforeDay = lines.slice(cursor, dayIdx);
+      var locIdx = -1;
+      for (var j = beforeDay.length - 1; j &gt;= 0; j--){ if (/کلاس|کارگاه/.test(beforeDay[j])) { locIdx = j; break; } }
+      var location, courseProfLines;
+      if (locIdx !== -1){
+        location = beforeDay[locIdx];
+        courseProfLines = beforeDay.slice(0, locIdx).concat(beforeDay.slice(locIdx + 1));
+      } else {
+        location = beforeDay.length ? beforeDay[beforeDay.length - 1] : &quot;&quot;;
+        courseProfLines = beforeDay.slice(0, Math.max(beforeDay.length - 1, 0));
+      }
+      location = location.replace(/مهندسی/g, &quot;&quot;).replace(/[()]/g, &quot;&quot;).replace(/\s+/g, &quot; &quot;).trim();
+
+      var cleanCP = courseProfLines.map(function(l){ return l.replace(PERCENT_STRIP_REGEX, &quot;&quot;).trim(); }).filter(function(l){ return l.length &gt; 0; });
+      var splitIdx = -1;
+      for (var k = 0; k &lt; cleanCP.length; k++){ if (PAREN_NUM_REGEX.test(cleanCP[k])) { splitIdx = k; break; } }
+      var courseLines, profLines;
+      if (splitIdx === -1){ courseLines = cleanCP; profLines = []; }
+      else { courseLines = cleanCP.slice(0, splitIdx + 1); profLines = cleanCP.slice(splitIdx + 1); }
+      var course = normalizeCourseName(courseLines.join(&quot; &quot;));
+      var professor = profLines.join(&quot; &quot;).replace(/\s+/g, &quot; &quot;).trim();
+
+      var day = lines[dayIdx];
+
+      var p = dayIdx + 1;
+      var timeMatches = [], dateMatch = &quot;&quot;;
+      while (p &lt; lines.length){
+        var l = lines[p];
+        var times = l.match(TIME_REGEX_G) || [];
+        var dm = l.match(DATE_REGEX);
+        if (!times.length &amp;&amp; !dm) break;
+        timeMatches = timeMatches.concat(times);
+        if (dm &amp;&amp; !dateMatch) dateMatch = dm[0];
+        p++;
+      }
+      cursor = p;
+
+      var timeStart = timeMatches[0] ? toPersianDigits(toEnglishDigits(timeMatches[0])) : &quot;&quot;;
+      var timeEnd = timeMatches[1] ? toPersianDigits(toEnglishDigits(timeMatches[1])) : &quot;&quot;;
+      var examParts = timeMatches.slice(2);
+      var examTime = examParts.length &gt;= 2
+        ? toPersianDigits(toEnglishDigits(examParts[0])) + &quot; - &quot; + toPersianDigits(toEnglishDigits(examParts[1]))
+        : (examParts.length === 1 ? toPersianDigits(toEnglishDigits(examParts[0])) : &quot;&quot;);
+      var examDate = dateMatch ? toPersianDigits(dateMatch) : &quot;&quot;;
+      var isLab = !examDate &amp;&amp; /آزمایشگاه/.test(course);
+
+      records.push({
+        day: normalizeDay(day),
+        course: course,
+        time_start: timeStart,
+        time_end: timeEnd,
+        location: location,
+        professor: professor,
+        is_lab: isLab,
+        exam_date: examDate,
+        exam_time: examTime
+      });
+    }
+    return records;
+  }
+
+  function parseWithLogic(rawText){
+    var statusEl = document.getElementById(&quot;parseStatus&quot;);
+    try {
+      var arr;
+      var looksLikeHtml = /&lt;table\b/i.test(rawText) || /&lt;html\b/i.test(rawText);
+      if (looksLikeHtml){
+        arr = parseHtmlTableToRows(rawText);
+      } else {
+        var lines = linesFromRawText(rawText);
+        arr = parseLinesToRows(lines);
+      }
+      if (!arr.length) throw new Error(&quot;هیچ ردیفی تشخیص داده نشد&quot;);
+      state.rows = arr;
+      setStatus(statusEl, arr.length + &quot; کلاس شناسایی شد.&quot;, &quot;ok&quot;);
+      showEditPanel();
+    } catch(e){
+      setStatus(statusEl, &quot;استخراج ناموفق بود: &quot; + (e &amp;&amp; e.message ? e.message : &quot;نامشخص&quot;), &quot;err&quot;);
+      if (!state.rows.length) state.rows = [blankRow()];
+      showEditPanel();
+    }
+  }
+
+  function setStatus(el, msg, kind){
+    el.className = &quot;status&quot; + (kind === &quot;err&quot; ? &quot; err&quot; : kind === &quot;ok&quot; ? &quot; ok&quot; : &quot;&quot;);
+    el.innerHTML = kind === &quot;loading&quot; ? &#39;&lt;span class=&quot;spinner&quot;&gt;&lt;/span&gt;&lt;span&gt;&#39;+escapeHtml(msg)+&#39;&lt;/span&gt;&#39; : escapeHtml(msg);
+  }
+
+  function blankRow(){
+    return { day:&quot;شنبه&quot;, course:&quot;&quot;, time_start:&quot;&quot;, time_end:&quot;&quot;, location:&quot;&quot;, professor:&quot;&quot;, is_lab:false, exam_date:&quot;&quot;, exam_time:&quot;&quot; };
+  }
+
+  // ---------- edit panel ----------
+  function showEditPanel(){
+    document.getElementById(&quot;editPanel&quot;).hidden = false;
+    renderRows();
+    document.getElementById(&quot;editPanel&quot;).scrollIntoView({ behavior:&quot;smooth&quot;, block:&quot;start&quot; });
+  }
+
+  function renderRows(){
+    var container = document.getElementById(&quot;rowsContainer&quot;);
+    container.innerHTML = &quot;&quot;;
+    if (!state.rows.length){
+      container.innerHTML = &#39;&lt;div class=&quot;empty-note&quot;&gt;هنوز کلاسی اضافه نشده.&lt;/div&gt;&#39;;
+      return;
+    }
+    state.rows.forEach(function(row, idx){
+      var card = document.createElement(&quot;div&quot;);
+      card.className = &quot;rowcard&quot;;
+
+      var dayOptions = DAY_ORDER.map(function(d){
+        return &#39;&lt;option value=&quot;&#39;+d+&#39;&quot;&#39;+(row.day===d?&#39; selected&#39;:&#39;&#39;)+&#39;&gt;&#39;+d+&#39;&lt;/option&gt;&#39;;
+      }).join(&quot;&quot;);
+
+      card.innerHTML =
+        &#39;&lt;div class=&quot;rowcard-top&quot;&gt;&lt;span class=&quot;idx&quot;&gt;کلاس &#39;+(idx+1)+&#39;&lt;/span&gt;&#39;+
+        &#39;&lt;button class=&quot;btn-danger&quot; data-act=&quot;del&quot; data-idx=&quot;&#39;+idx+&#39;&quot;&gt;حذف&lt;/button&gt;&lt;/div&gt;&#39;+
+        &#39;&lt;div class=&quot;field-grid&quot;&gt;&#39;+
+          &#39;&lt;div class=&quot;field full&quot;&gt;&lt;label&gt;نام درس&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;course&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.course)+&#39;&quot;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field full&quot;&gt;&lt;label&gt;روز&lt;/label&gt;&lt;select data-field=&quot;day&quot; data-idx=&quot;&#39;+idx+&#39;&quot;&gt;&#39;+dayOptions+&#39;&lt;/select&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field&quot;&gt;&lt;label&gt;ساعت شروع&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;time_start&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.time_start)+&#39;&quot; placeholder=&quot;۱۸:۰۰&quot;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field&quot;&gt;&lt;label&gt;ساعت پایان&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;time_end&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.time_end)+&#39;&quot; placeholder=&quot;۲۰:۱۵&quot;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field full&quot;&gt;&lt;label&gt;مکان&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;location&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.location)+&#39;&quot; placeholder=&quot;کلاس ۴۲۶&quot;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field full&quot;&gt;&lt;label&gt;استاد&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;professor&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.professor)+&#39;&quot;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field&quot;&gt;&lt;label&gt;تاریخ امتحان&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;exam_date&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.exam_date)+&#39;&quot; placeholder=&quot;۱۴۰۵/۱۰/۲۹&quot;&#39;+(row.is_lab?&#39; disabled&#39;:&#39;&#39;)+&#39;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;field&quot;&gt;&lt;label&gt;ساعت امتحان&lt;/label&gt;&lt;input type=&quot;text&quot; data-field=&quot;exam_time&quot; data-idx=&quot;&#39;+idx+&#39;&quot; value=&quot;&#39;+escapeHtml(row.exam_time)+&#39;&quot; placeholder=&quot;۱۱:۰۰ - ۱۲:۳۰&quot;&#39;+(row.is_lab?&#39; disabled&#39;:&#39;&#39;)+&#39;&gt;&lt;/div&gt;&#39;+
+          &#39;&lt;label class=&quot;checkline&quot;&gt;&lt;input type=&quot;checkbox&quot; data-field=&quot;is_lab&quot; data-idx=&quot;&#39;+idx+&#39;&quot;&#39;+(row.is_lab?&#39; checked&#39;:&#39;&#39;)+&#39;&gt; امتحان آزمایشگاهی&lt;/label&gt;&#39;+
+        &#39;&lt;/div&gt;&#39;;
+      container.appendChild(card);
+    });
+  }
+
+  document.getElementById(&quot;rowsContainer&quot;).addEventListener(&quot;input&quot;, function(e){
+    var field = e.target.getAttribute(&quot;data-field&quot;);
+    var idx = e.target.getAttribute(&quot;data-idx&quot;);
+    if (field === null || idx === null) return;
+    idx = parseInt(idx, 10);
+    if (field === &quot;is_lab&quot;){
+      state.rows[idx].is_lab = e.target.checked;
+      renderRows();
+      return;
+    }
+    state.rows[idx][field] = e.target.value;
+  });
+  document.getElementById(&quot;rowsContainer&quot;).addEventListener(&quot;click&quot;, function(e){
+    var btn = e.target.closest(&quot;[data-act=&#39;del&#39;]&quot;);
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute(&quot;data-idx&quot;), 10);
+    state.rows.splice(idx, 1);
+    renderRows();
+  });
+  document.getElementById(&quot;addRowBtn&quot;).addEventListener(&quot;click&quot;, function(){
+    state.rows.push(blankRow());
+    renderRows();
+  });
+
+  // ---------- build &amp; preview ----------
+  function sortedRows(){
+    return state.rows.slice().sort(function(a,b){
+      var da = DAY_ORDER.indexOf(normalizeDay(a.day));
+      var db = DAY_ORDER.indexOf(normalizeDay(b.day));
+      if (da !== db) return da - db;
+      return timeToMinutes(a.time_start) - timeToMinutes(b.time_start);
+    });
+  }
+
+  // Format exam information as distinct date and time fields for clarity.
+  // Lab courses use the Persian label in both preview and downloaded output.
+  function examDisplayHtml(row){
+    if (row.is_lab){
+      return &#39;&lt;div class=&quot;sched-exam&quot;&gt;&lt;span class=&quot;exam-badge lab&quot;&gt;امتحان آزمایشگاهی&lt;/span&gt;&lt;/div&gt;&#39;;
+    }
+    var fields = [];
+    var examDate = (row.exam_date || &quot;&quot;).trim();
+    var examTime = (row.exam_time || &quot;&quot;).trim();
+    if (examDate){
+      fields.push(&#39;&lt;span class=&quot;exam-badge exam-date&quot;&gt;&lt;span class=&quot;exam-label&quot;&gt;تاریخ امتحان&lt;/span&gt;&lt;span class=&quot;exam-separator&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;exam-value&quot;&gt;&#39;+escapeHtml(examDate)+&#39;&lt;/span&gt;&lt;/span&gt;&#39;);
+    }
+    if (examTime){
+      fields.push(&#39;&lt;span class=&quot;exam-badge exam-time&quot;&gt;&lt;span class=&quot;exam-label&quot;&gt;ساعت امتحان&lt;/span&gt;&lt;span class=&quot;exam-separator&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;exam-value&quot;&gt;&#39;+escapeHtml(examTime)+&#39;&lt;/span&gt;&lt;/span&gt;&#39;);
+    }
+    return fields.length ? &#39;&lt;div class=&quot;sched-exam&quot;&gt;&#39;+fields.join(&quot;&quot;)+&#39;&lt;/div&gt;&#39; : &quot;&quot;;
+  }
+
+  // Render each class once; the live preview and downloaded HTML share this markup.
+  function rowHtml(row){
+    var day = normalizeDay(row.day);
+    var color = DAY_COLORS[day] || &quot;#334155&quot;;
+    var timeStr = (row.time_start||&quot;&quot;) + (row.time_end ? &quot; – &quot;+row.time_end : &quot;&quot;);
+    return (
+      &#39;&lt;div class=&quot;sched-row&quot;&gt;&#39;+
+        &#39;&lt;div class=&quot;sched-day&quot; style=&quot;background:&#39;+color+&#39;;&quot;&gt;&#39;+escapeHtml(day)+&#39;&lt;/div&gt;&#39;+
+        &#39;&lt;div class=&quot;sched-info&quot;&gt;&#39;+
+          &#39;&lt;div class=&quot;sched-course&quot;&gt;&#39;+escapeHtml(row.course||&quot;—&quot;)+&#39;&lt;/div&gt;&#39;+
+          &#39;&lt;div class=&quot;sched-meta&quot;&gt;&#39;+
+            (timeStr.trim() ? &#39;&lt;span class=&quot;sched-time&quot;&gt;&#128336; &#39;+escapeHtml(timeStr)+&#39;&lt;/span&gt;&#39; : &#39;&#39;)+
+            (row.location ? &#39;&lt;span class=&quot;sched-location&quot;&gt;&#128205; &#39;+escapeHtml(row.location)+&#39;&lt;/span&gt;&#39; : &#39;&#39;)+
+            (row.professor ? &#39;&lt;span class=&quot;sched-prof&quot;&gt;&#128100; &#39;+escapeHtml(row.professor)+&#39;&lt;/span&gt;&#39; : &#39;&#39;)+
+          &#39;&lt;/div&gt;&#39;+ examDisplayHtml(row)+
+        &#39;&lt;/div&gt;&#39;+
+      &#39;&lt;/div&gt;&#39;
+    );
+  }
+  function buildScheduleFragment(){
+    var rows = sortedRows();
+    var rowsHtml = rows.length ? rows.map(rowHtml).join(&quot;&quot;) : &#39;&lt;div class=&quot;sched-info&quot;&gt;&lt;div class=&quot;sched-course&quot;&gt;هیچ کلاسی ثبت نشده&lt;/div&gt;&lt;/div&gt;&#39;;
+    return (
+      &#39;&lt;div class=&quot;sched-page&quot; data-style=&quot;&#39;+escapeHtml(selectedScheduleStyle)+&#39;&quot;&gt;&#39;+
+        &#39;&lt;div class=&quot;sched-header&quot;&gt;&lt;span class=&quot;title&quot;&gt;&#128197; &#39;+escapeHtml(state.scheduleTitle)+&#39; &#128197;&lt;/span&gt;&lt;/div&gt;&#39;+
+        &#39;&lt;div class=&quot;sched-card&quot;&gt;&#39;+rowsHtml+&#39;&lt;/div&gt;&#39;+
+      &#39;&lt;/div&gt;&#39;
+    );
+  }
+  // Build a standalone schedule file with the selected theme and shared row markup.
+  function standaloneHtml(){
+    var visualCss = document.getElementById(&quot;scheduleVisualStyles&quot;).textContent;
+    return [
+      &#39;&lt;!DOCTYPE html&gt;&#39;,
+      &#39;&lt;html lang=&quot;fa&quot; dir=&quot;rtl&quot;&gt;&#39;,
+      &#39;&lt;head&gt;&#39;,
+      &#39;&lt;meta charset=&quot;UTF-8&quot;&gt;&#39;,
+      &#39;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0&quot;&gt;&#39;,
+      &#39;&lt;title&gt;&#39;+escapeHtml(state.scheduleTitle)+&#39;&lt;/title&gt;&#39;,
+      &#39;&lt;style&gt;&#39;,
+      &quot;@import url(&#39;https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&amp;display=swap&#39;);&quot;,
+      &#39;body{margin:0;min-height:100vh;padding:12px;background:#f3f4f6}&#39;,
+      visualCss,
+      &#39;&lt;/style&gt;&#39;,
+      &#39;&lt;/head&gt;&#39;,
+      &#39;&lt;body&gt;&#39;,
+      buildScheduleFragment(),
+      &#39;&lt;/body&gt;&#39;,
+      &#39;&lt;/html&gt;&#39;
+    ].join(&quot;\n&quot;);
+  }
+  function showPreview(){
+    document.getElementById(&quot;previewPanel&quot;).hidden = false;
+    document.getElementById(&quot;previewWrap&quot;).innerHTML = buildScheduleFragment();
+    document.getElementById(&quot;previewPanel&quot;).scrollIntoView({ behavior:&quot;smooth&quot;, block:&quot;start&quot; });
+  }
+
+  document.getElementById(&quot;scheduleStyleSelect&quot;).addEventListener(&quot;change&quot;, function(){
+    selectedScheduleStyle = this.value;
+    if (!document.getElementById(&quot;previewPanel&quot;).hidden){
+      document.getElementById(&quot;previewWrap&quot;).innerHTML = buildScheduleFragment();
+    }
+  });
+  document.getElementById(&quot;buildBtn&quot;).addEventListener(&quot;click&quot;, function(){
+    showPreview();
+  });
+
+  document.getElementById(&quot;downloadBtn&quot;).addEventListener(&quot;click&quot;, function(){
+    var statusEl = document.getElementById(&quot;downloadStatus&quot;);
+    try {
+      var blob = new Blob([standaloneHtml()], { type: &quot;text/html&quot; });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement(&quot;a&quot;);
+      a.href = url;
+      a.download = &quot;schedule.html&quot;;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus(statusEl, &quot;ذخیره شد.&quot;, &quot;ok&quot;);
+    } catch(e){
+      setStatus(statusEl, &quot;خطا در ذخیره.&quot;, &quot;err&quot;);
+    }
+  });
+
+  // Export an opaque JPEG with a background matched to the selected schedule theme.
+  function imageBackgroundForStyle(style){
+    var colors = {
+      &quot;night&quot;:&quot;#24243e&quot;,
+      &quot;night-light&quot;:&quot;#f0f2f7&quot;,
+      &quot;light-cards&quot;:&quot;#f1eee8&quot;,
+      &quot;purple-cards&quot;:&quot;#171321&quot;
+    };
+    return colors[style] || colors.night;
+  }
+  document.getElementById(&quot;downloadImgBtn&quot;).addEventListener(&quot;click&quot;, async function(){
+    var statusEl = document.getElementById(&quot;downloadStatus&quot;);
+    if (!window.html2canvas){
+      setStatus(statusEl, &quot;کتابخانه تصویرسازی بارگذاری نشد (اتصال اینترنت لازم است).&quot;, &quot;err&quot;);
+      return;
+    }
+    setStatus(statusEl, &quot;در حال آماده‌سازی تصویر...&quot;, &quot;loading&quot;);
+    try {
+      var target = document.querySelector(&quot;#previewWrap .sched-page&quot;);
+      var canvas = await html2canvas(target, {
+        backgroundColor: imageBackgroundForStyle(selectedScheduleStyle),
+        scale: 3,
+        useCORS: true
+      });
+      await new Promise(function(resolve, reject){
+        canvas.toBlob(function(blob){
+          if (!blob) { reject(new Error(&quot;blob failed&quot;)); return; }
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement(&quot;a&quot;);
+          a.href = url;
+          a.download = &quot;schedule.jpeg&quot;;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          resolve();
+        }, &quot;image/jpeg&quot;, 0.98);
+      });
+      setStatus(statusEl, &quot;تصویر JPEG ذخیره شد.&quot;, &quot;ok&quot;);
+    } catch(e){
+      setStatus(statusEl, &quot;خطا در ساخت تصویر: &quot; + (e &amp;&amp; e.message ? e.message : &quot;نامشخص&quot;), &quot;err&quot;);
+    }
+  });
+
+  // ---------- input wiring ----------
+  var fileInput = document.getElementById(&quot;fileInput&quot;);
+  var fileBtn = document.getElementById(&quot;fileBtn&quot;);
+  var fileNameDisplay = document.getElementById(&quot;fileNameDisplay&quot;);
+  var pendingFile = null;
+
+  fileBtn.addEventListener(&quot;click&quot;, function(){ fileInput.click(); });
+  fileInput.addEventListener(&quot;change&quot;, function(){
+    if (fileInput.files &amp;&amp; fileInput.files[0]){
+      pendingFile = fileInput.files[0];
+      fileNameDisplay.textContent = pendingFile.name;
+      document.getElementById(&quot;pasteText&quot;).value = &quot;&quot;;
+    }
+  });
+  document.getElementById(&quot;pasteText&quot;).addEventListener(&quot;input&quot;, function(){
+    if (this.value.trim()) { pendingFile = null; fileNameDisplay.textContent = &quot;&quot;; fileInput.value = &quot;&quot;; }
+  });
+
+  document.getElementById(&quot;manualBtn&quot;).addEventListener(&quot;click&quot;, function(){
+    if (!state.rows.length) state.rows = [blankRow()];
+    showEditPanel();
+  });
+
+  document.getElementById(&quot;parseBtn&quot;).addEventListener(&quot;click&quot;, async function(){
+    var statusEl = document.getElementById(&quot;parseStatus&quot;);
+    var pasted = document.getElementById(&quot;pasteText&quot;).value.trim();
+    if (!pendingFile &amp;&amp; !pasted){
+      setStatus(statusEl, &quot;فایل یا متن وارد کن.&quot;, &quot;err&quot;);
+      return;
+    }
+    try{
+      var rawText = pasted;
+      if (!rawText &amp;&amp; pendingFile){
+        setStatus(statusEl, &quot;در حال خواندن فایل...&quot;, &quot;loading&quot;);
+        rawText = await pendingFile.text();
+      }
+      if (!rawText || !rawText.trim()){
+        setStatus(statusEl, &quot;متنی از فایل استخراج نشد.&quot;, &quot;err&quot;);
+        return;
+      }
+      parseWithLogic(rawText);
+    } catch(e){
+      setStatus(statusEl, &quot;خطا: &quot; + (e &amp;&amp; e.message ? e.message : &quot;نامشخص&quot;), &quot;err&quot;);
+    }
+  });
+
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+
+
+
+
+
+ --></code></pre></div></details>
+<p class="footer">For installation, usage, parser notes, deployment, and maintenance instructions, see the repository <a href="https://github.com/samansbn/persian-schedule-app#readme">README</a>. Return to the <a href="index.html">schedule app</a>.</p>
 </main></body></html>
