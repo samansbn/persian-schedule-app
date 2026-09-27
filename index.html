@@ -37,7 +37,6 @@
     justify-content:center; gap:10px;
   }
 
-  .release-guide-link{margin-top:8px;font-size:.75rem}.release-guide-link a{color:var(--accent);text-decoration:none}.release-guide-link a:hover{text-decoration:underline}
   .panel{
     background:var(--card); border:1px solid var(--border); border-radius:18px;
     padding:18px; margin-bottom:16px; box-shadow:0 10px 40px rgba(0,0,0,0.35);
@@ -152,6 +151,16 @@
     box-shadow:0 6px 18px rgba(0,0,0,0.3);
   }
 
+  .code-guide-button{
+    position:fixed; top:14px; right:14px; z-index:50;
+    width:40px; height:40px; border-radius:50%; background:var(--card);
+    border:1px solid var(--border); color:var(--accent); font-family:ui-monospace,monospace;
+    font-size:.78rem; font-weight:700; text-decoration:none;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+  .code-guide-button:hover{border-color:var(--accent); transform:translateY(-1px)}
+
   @media (max-width:380px){
     .field-grid{ grid-template-columns:1fr; }
   }
@@ -168,11 +177,11 @@
 <body>
 
   <button id="themeToggle" title="حالت روشن/تیره">🌙</button>
+  <a class="code-guide-button" href="code-guide.html" title="Code walkthrough · راهنمای کد" aria-label="Code walkthrough">&lt;/&gt;</a>
 
   <div class="shell">
     <header class="app-head">
       <h1><span>📅</span>برنامه‌ساز کلاسی<span>📅</span></h1>
-      <p class="release-guide-link"><a href="code-guide.html">Code walkthrough · ساختار کد</a></p>
     </header>
 
     <!-- STEP 1: input -->
@@ -211,7 +220,7 @@
     <!-- STEP 3: preview + download -->
     <div class="panel" id="previewPanel" hidden>
       <h2><span class="step-num">۳</span>پیش‌نمایش خروجی</h2>
-      <div class="style-field"><label for="scheduleStyleSelect">سبک برنامه</label><select id="scheduleStyleSelect"><option value="night">۱ · شبانه</option><option value="night-light">۲ · شبانه روشن</option><option value="light-cards">۳ · کارت روشن</option><option value="purple-cards">۴ · کارت بنفش</option></select></div>
+      <div class="style-field"><label for="scheduleStyleSelect">سبک برنامه</label><select id="scheduleStyleSelect"><option value="night">۱ · Nightfall · شبانه</option><option value="night-light">۲ · Moonlit · شبانه روشن</option><option value="light-cards">۳ · Sandstone Cards · کارت روشن</option><option value="purple-cards">۴ · Violet Cards · کارت بنفش</option></select></div>
       <div id="previewWrap"></div>
       <div class="download-actions" aria-label="دریافت برنامه">
         <button class="btn-primary" id="downloadImgBtn">ذخیره به‌صورت JPEG</button>
